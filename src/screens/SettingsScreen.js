@@ -21,6 +21,8 @@ import marked from "marked";
 import { PrivacyPolicyText } from "../files/Privacy";
 import WebView from "react-native-webview";
 import { ScrollView } from "react-native-gesture-handler";
+import PreferenceButton from "../pref/PreferenceButton";
+import Preference from "../pref/Preference";
 
 const SettingsScreen = ({ navigation }) => {
   const [darkMode, setDarkMode] = useState(false);
@@ -242,91 +244,6 @@ const ProfileView = ({ theme }) => {
       <Text style={{ color: theme.textColor, fontSize: 20, fontWeight: "500" }}>
         {result.user.name}
       </Text>
-    </View>
-  );
-};
-
-const PreferenceButton = ({ title, iconName, theme, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <View
-        style={{
-          flexDirection: "row",
-          marginVertical: 5,
-          height: 40,
-          paddingHorizontal: 20,
-          alignItems: "baseline",
-          justifyContent: "space-between",
-        }}
-      >
-        <Text
-          style={{
-            color: theme.textColor,
-            alignSelf: "flex-start",
-            fontSize: 18,
-          }}
-        >
-          {title}
-        </Text>
-        <MaterialIcons
-          style={{
-            color: theme.textColorCard,
-            alignSelf: "flex-end",
-            fontSize: 18,
-          }}
-          name={iconName}
-          size={30}
-        />
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const Preference = ({ prefName, name, value, onChange, disabled, theme }) => {
-  const storePrefChange = async () => {
-    await AsyncStorage.setItem(
-      `${prefName}`,
-      value === false ? "true" : "false"
-    );
-    let k = await AsyncStorage.getAllKeys();
-  };
-  return (
-    <View>
-      <View
-        style={{
-          flexDirection: "row",
-          height: 20,
-          justifyContent: "space-between",
-          alignItems: "baseline",
-          padding: 5,
-          margin: 5,
-          height: 50,
-        }}
-      >
-        <Text
-          style={{
-            alignSelf: "flex-start",
-            marginHorizontal: 10,
-            fontSize: 18,
-            color: theme.textColor,
-          }}
-        >
-          {name}
-        </Text>
-        <Switch
-          value={value}
-          disabled={disabled}
-          onValueChange={(val) => {
-            onChange(val);
-            storePrefChange();
-          }}
-          style={{
-            alignSelf: "flex-end",
-            marginHorizontal: 10,
-          }}
-        />
-      </View>
-      {/* <Divider style={{ width: "80%", margin: 20 }} /> */}
     </View>
   );
 };

@@ -1,22 +1,54 @@
 import React, { useContext } from "react";
 import { View, StyleSheet, Text } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import ThemeContext from "../context/ThemeContext";
 import { useCurrentTheme } from "../screens/SettingsScreen";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Styles from "../styles/Styles";
 
-const Card = ({ title, email, subject }) => {
+const Card = ({ title, subject, email }) => {
   const { theme } = useContext(ThemeContext);
-  // const theme = useCurrentTheme();
+  var dt = new Date(0);
+  dt.setUTCSeconds(dt / 1000);
+  const _date = dt.toDateString();
   return (
     <View
       style={[
         styles.container,
-        styles.dropShadow,
+        Styles.dropShadow,
         { backgroundColor: theme.backgroundColorCard },
       ]}
     >
-      <Text style={[styles.title, { color: theme.textColorCard }]}>
-        {title}
-      </Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text style={[styles.title, { color: theme.textColorCard }]}>
+          {title}
+        </Text>
+        <TouchableOpacity
+          style={{
+            borderRadius: 8,
+            backgroundColor: theme.boxBackground,
+            margin: 5,
+            width: 35,
+            height: 32,
+            alignSelf: "flex-end",
+          }}
+        >
+          <MaterialCommunityIcons
+            name="dots-vertical"
+            style={{
+              color: theme.boxText,
+              fontSize: 30,
+              textAlign: "center",
+              textAlignVertical: "center",
+            }}
+          />
+        </TouchableOpacity>
+      </View>
       <Text style={[styles.text, { color: theme.textColorCardBody }]}>
         {subject}
       </Text>
@@ -49,16 +81,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     padding: 5,
-  },
-  dropShadow: {
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 5,
-    elevation: 8,
   },
 });
 
