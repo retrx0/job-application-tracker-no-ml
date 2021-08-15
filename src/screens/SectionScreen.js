@@ -21,6 +21,7 @@ import { color } from "react-native-reanimated";
 import UserContext from "../context/UserContext";
 import NotifyContext from "../context/NotifyContext";
 import { credentials } from "../auth/Auth";
+import SearchArea from "../components/SearchArea";
 
 export const isAndroid = () => Platform.OS === "android";
 
@@ -36,6 +37,9 @@ const SectionScreen = ({ navigation, route }) => {
   const { setBadge, getBadge } = useContext(NotifyContext);
 
   useEffect(() => {
+
+    //AsyncStorage.clear();
+
     const startApplyingDate = String(startDate).replace("-", "/");
     const get = async (constraint) => {
       // Fetch Emails
@@ -264,78 +268,6 @@ const getEmail = async ({ user, item }) => {
     return email;
   });
   return email;
-};
-
-const SearchArea = ({ emails, searchTerm, setSearchTerm, theme }) => {
-  return (
-    <View style={[styles.search, { backgroundColor: theme.backgroundColor }]}>
-      <View
-        style={[
-          {
-            backgroundColor: theme.backgroundColorCard,
-            flex: 1,
-          },
-          styles.search,
-          styles.dropShadow,
-        ]}
-      >
-        <Feather
-          name="search"
-          size={20}
-          style={{ padding: 5, color: theme.textColorLight }}
-        />
-        <TextInput
-          placeholder="Search"
-          placeholderTextColor={theme.textColorLight}
-          underlineColorAndroid={theme.backgroundColorCard}
-          autoCapitalize={"none"}
-          autoCorrect={false}
-          clearButtonMode={"while-editing"}
-          returnKeyType={"search"}
-          onChangeText={(text) => setSearchTerm(text)}
-          style={[
-            {
-              height: 38,
-              fontSize: 18,
-              flex: 1,
-              padding: 5,
-              borderRadius: 10,
-              color: theme.textColor,
-              backgroundColor: theme.backgroundColorAlt,
-              alignSelf: "center",
-            },
-          ]}
-        />
-      </View>
-      <View
-        style={[
-          {
-            marginTop: 5,
-            alignSelf: "center",
-            paddingHorizontal: 10,
-            paddingVertical: 5,
-            borderRadius: 8,
-            borderColor: theme.boxBackground,
-            backgroundColor: theme.boxBackground,
-            borderWidth: 1,
-            marginHorizontal: 5,
-            color: theme.boxText,
-          },
-        ]}
-      >
-        <Text
-          style={{
-            textAlignVertical: "center",
-            fontSize: 18,
-            fontWeight: "600",
-            color: theme.boxText,
-          }}
-        >
-          {emails.length}
-        </Text>
-      </View>
-    </View>
-  );
 };
 
 const styles = StyleSheet.create({

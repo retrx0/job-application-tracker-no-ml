@@ -3,8 +3,8 @@ import React from "react";
 export const isAndroid = () => Platform.OS === "android";
 
 export const credentials = {
-  iosClientId: `575965648407-6rss1rstcgm51q1roa1bhaljjkoni900.apps.googleusercontent.com`,
-  androidClientId: `575965648407-v6itn1o9uuo9fqtrkr7tn3j6n6i712en.apps.googleusercontent.com`,
+  iosClientId: `575965648407-g65mep1gpvofbe4vglgaojdha28svkie.apps.googleusercontent.com`,
+  androidClientId: `575965648407-vftkh3lpkfpdmrkuur7q2fagfioncjq5.apps.googleusercontent.com`,
   scopes: [
     "profile",
     "email",
