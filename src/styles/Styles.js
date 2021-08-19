@@ -11,4 +11,7 @@ export default Styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 4,
   },
+  AppBorderRadiusDefault: {
+    borderRadius: 8,
+  },
 });

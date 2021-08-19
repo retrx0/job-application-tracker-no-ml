@@ -16,6 +16,7 @@ import UserContext from "../context/UserContext";
 import ThemeContext from "../context/ThemeContext";
 import NotifyContext from "../context/NotifyContext";
 import { credentials } from "../auth/Auth";
+import Styles from "../styles/Styles";
 
 export const isAndroid = () => Platform.OS === "android";
 
@@ -103,7 +104,8 @@ const LoginScreen = ({ navigation }) => {
           <View
             style={[
               styles.button,
-              styles.dropShadow,
+              Styles.dropShadow,
+              Styles.AppBorderRadiusDefault,
               { backgroundColor: "#fff" },
             ]}
           >
@@ -137,20 +139,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     flexDirection: "row",
-    borderRadius: 5,
     paddingHorizontal: 20,
     paddingVertical: 10,
     fontSize: 18,
-  },
-  dropShadow: {
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 4,
   },
 });
 

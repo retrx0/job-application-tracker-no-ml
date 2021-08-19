@@ -18,9 +18,9 @@ export default ModalButton = ({ onPress, title, theme }) => {
       <View
         style={[
           Styles.dropShadow,
+          Styles.AppBorderRadiusDefault,
           {
             backgroundColor: theme.boxBackground,
-            borderRadius: 8,
             padding: 5,
           },
         ]}

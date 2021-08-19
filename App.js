@@ -19,14 +19,12 @@ import {
   StatusBar,
 } from "react-native";
 import Animated, { color } from "react-native-reanimated";
-import {
-  NavigationContainer,
-} from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { UserProvider } from "./src/context/UserContext";
 import ThemeContext, { ThemeProvider } from "./src/context/ThemeContext";
 import NotifyContext, { NotifyProvider } from "./src/context/NotifyContext";
 import WelcomeScreen from "./src/screens/WelcomeScreen";
-import Tab from './src/components/Tab'
+import Tab from "./src/components/Tab";
 
 const Stack = createStackNavigator();
 const BottomTab = createMaterialBottomTabNavigator();

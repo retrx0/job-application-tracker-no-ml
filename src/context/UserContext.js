@@ -5,7 +5,16 @@ const UserContext = React.createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [startDate, setStartDate] = useState("");
+  const currentDate = new Date(
+    new Date().setFullYear(new Date().getFullYear() - 1)
+  );
+  const [startDate, setStartDate] = useState(
+    currentDate.getFullYear() +
+      "/" +
+      currentDate.getMonth() +
+      "/" +
+      currentDate.getDay()
+  );
 
   const setAndSaveUser = (user) => {
     setUser(user);

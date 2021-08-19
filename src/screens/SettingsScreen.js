@@ -23,6 +23,7 @@ import WebView from "react-native-webview";
 import { ScrollView } from "react-native-gesture-handler";
 import PreferenceButton from "../pref/PreferenceButton";
 import Preference from "../pref/Preference";
+import Keys from "../auth/Keys";
 
 const SettingsScreen = ({ navigation }) => {
   const [darkMode, setDarkMode] = useState(false);
@@ -31,11 +32,8 @@ const SettingsScreen = ({ navigation }) => {
   const { theme, setTheme, lightTheme, darkTheme } = useContext(ThemeContext);
   const sys_theme = useColorScheme();
 
-  const auto_dark_mode_key = "@auto-dark-mode";
-  const dark_mode_key = "@dark-mode";
-
   useEffect(() => {
-    AsyncStorage.multiGet(["@auto-dark-mode", "@dark-mode"]).then((data) => {
+    AsyncStorage.multiGet([Keys.autoDarkMode, Keys.darkMode]).then((data) => {
       if (data !== null) {
         const adm = data[0][1] === "true" ? true : false;
         const dm = data[1][1] === "true" ? true : false;
@@ -52,7 +50,7 @@ const SettingsScreen = ({ navigation }) => {
         <ProfileView theme={theme} />
         <SectionDivider title="Appearance" theme={theme} />
         <Preference
-          prefName={auto_dark_mode_key}
+          prefName={Keys.autoDarkMode}
           value={autoDarkMode}
           disabled={false}
           onChange={(p) => {
@@ -68,7 +66,7 @@ const SettingsScreen = ({ navigation }) => {
           name="Auto dark mode"
         />
         <Preference
-          prefName={dark_mode_key}
+          prefName={Keys.darkMode}
           value={darkMode}
           disabled={autoDarkMode}
           onChange={(p) => {
