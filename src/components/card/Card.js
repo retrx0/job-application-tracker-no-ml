@@ -1,10 +1,23 @@
 import React, { useContext } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import ThemeContext from "../context/ThemeContext";
-import { useCurrentTheme } from "../screens/SettingsScreen";
+import ThemeContext from "../../context/ThemeContext";
+import { useCurrentTheme } from "../../screens/SettingsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Styles from "../styles/Styles";
+import Styles from "../../styles/Styles";
+import ViaBadge from "../badge/ViaBadge";
+// import PopUpMenu from "./menu/PopUpMenu";
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from "react-native-popup-menu";
+
+import Arrow from "react-native-bootstrap-icons/icons/arrow-left-right";
+import Trash from "react-native-bootstrap-icons/icons/trash";
+import PencilSquare from "react-native-bootstrap-icons/icons/pencil-square";
+import CustomMenuOption from "./../card/menu/CustomMenuOption";
 
 const Card = ({ from, date, address, via }) => {
   const { theme } = useContext(ThemeContext);
@@ -41,6 +54,32 @@ const Card = ({ from, date, address, via }) => {
         <Text style={[styles.title, { color: theme.textColorCard }]}>
           {String(from).charAt(0).toUpperCase() + String(from).slice(1)}
         </Text>
+        <PopUpMenu theme={theme} />
+      </View>
+      <ViaBadge theme={theme} via={via} />
+      <Text style={[styles.date, { color: theme.textColorLight }]}>
+        {_date}
+      </Text>
+    </View>
+  );
+};
+
+const PopUpMenu = ({ theme }) => {
+  const customMenuStyle = {
+    optionText: {
+      fontSize: 18,
+      color: theme.textColorCard,
+    },
+    optionsContainer: {
+      padding: 10,
+      borderRadius: 8,
+      backgroundColor: theme.backgroundColor,
+    },
+  };
+
+  return (
+    <Menu>
+      <MenuTrigger>
         <TouchableOpacity
           style={{
             borderRadius: 8,
@@ -61,41 +100,25 @@ const Card = ({ from, date, address, via }) => {
             }}
           />
         </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          borderRadius: 10,
-        }}
-      >
-        <View
-          style={[
-            Styles.AppBorderRadiusDefault,
-            {
-              justifyContent: "flex-start",
-              margin: 5,
-              backgroundColor: theme.boxBackground,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.text,
-              {
-                fontWeight: "500",
-                color: theme.textColorSuccess,
-              },
-            ]}
-          >
-            {via ? "via " + via : ""}
-          </Text>
-        </View>
-      </View>
-
-      <Text style={[styles.date, { color: theme.textColorLight }]}>
-        {_date}
-      </Text>
-    </View>
+      </MenuTrigger>
+      <MenuOptions customStyles={customMenuStyle}>
+        <CustomMenuOption
+          text={"Recategorize"}
+          IconComponent={Arrow}
+          textColor={theme.textColorCard}
+        />
+        <CustomMenuOption
+          text={"Edit"}
+          IconComponent={PencilSquare}
+          textColor={theme.textColorCard}
+        />
+        <CustomMenuOption
+          text={"Delete"}
+          IconComponent={Trash}
+          textColor={theme.textColorDanger}
+        />
+      </MenuOptions>
+    </Menu>
   );
 };
 

@@ -25,6 +25,7 @@ import ThemeContext, { ThemeProvider } from "./src/context/ThemeContext";
 import NotifyContext, { NotifyProvider } from "./src/context/NotifyContext";
 import WelcomeScreen from "./src/screens/WelcomeScreen";
 import Tab from "./src/components/Tab";
+import { MenuProvider } from "react-native-popup-menu";
 
 const Stack = createStackNavigator();
 const BottomTab = createMaterialBottomTabNavigator();
@@ -196,10 +197,12 @@ export default App = () => {
             return (
               <NavigationContainer theme={theme}>
                 <UserProvider>
-                  <NotifyProvider>
-                    <StatusBar animated={true} />
-                    <Root />
-                  </NotifyProvider>
+                  <MenuProvider>
+                    <NotifyProvider>
+                      <StatusBar animated={true} />
+                      <Root />
+                    </NotifyProvider>
+                  </MenuProvider>
                 </UserProvider>
               </NavigationContainer>
             );

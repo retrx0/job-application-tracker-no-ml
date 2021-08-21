@@ -13,7 +13,7 @@ import {
   Alert,
   Platform,
 } from "react-native";
-import Card from "../components/Card";
+import Card from "../components/card/Card";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 import ThemeContext from "../context/ThemeContext";
@@ -169,7 +169,7 @@ const SectionScreen = ({ navigation, route }) => {
   return (
     <View style={{ backgroundColor: theme.backgroundColor, flex: 1 }}>
       <SafeAreaView style={[{ flex: 1 }]}>
-        <Modal visible={modalVisible} transparent={true} animationType={"fade"}>
+        {/* <Modal visible={modalVisible} transparent={true} animationType={"fade"}>
           <View
             style={{
               flex: 1,
@@ -184,11 +184,11 @@ const SectionScreen = ({ navigation, route }) => {
               size={"large"}
               color={theme.textColor}
             />
-            {/* <Text style={{ color: theme.textColor, fontSize: 16, margin: 10 }}>
+            { <Text style={{ color: theme.textColor, fontSize: 16, margin: 10 }}>
               Please wait a bit...
-            </Text> */}
+            </Text> }
           </View>
-        </Modal>
+        </Modal> */}
         <FlatList
           style={{ flex: 1, backgroundColor: theme.backgroundColor }}
           showsVerticalScrollIndicator={true}

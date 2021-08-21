@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { View, TouchableOpacity, Text, StatusBar } from "react-native";
-import Badge from "./Badge";
+import Badge from "./badge/Badge";
 import ThemeContext from "../context/ThemeContext";
 import NotifyContext from "../context/NotifyContext";
 import Animated from "react-native-reanimated";
