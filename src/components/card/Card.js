@@ -25,7 +25,11 @@ const Card = ({ from, date, address, via }) => {
   dt.setUTCSeconds(date / 1000);
   const _date = dt.toDateString();
 
-  if (String(from).startsWith('"')) from = String(from).replaceAll('"', "");
+  if (String(from).startsWith('"')) {
+    let rgx = new RegExp(`"`, "g");
+    from = String(from).replace(rgx, "");
+  }
+
   if (
     String(from).startsWith("no-reply") ||
     String(from).startsWith("noreply") ||
@@ -47,14 +51,16 @@ const Card = ({ from, date, address, via }) => {
       <View
         style={{
           flexDirection: "row",
-          flexWrap: "wrap",
+          position: "relative",
           justifyContent: "space-between",
         }}
       >
         <Text style={[styles.title, { color: theme.textColorCard }]}>
           {String(from).charAt(0).toUpperCase() + String(from).slice(1)}
         </Text>
-        <PopUpMenu theme={theme} />
+        <View style={{ position: "absolute", top: 3, right: 3 }}>
+          <PopUpMenu theme={theme} />
+        </View>
       </View>
       <ViaBadge theme={theme} via={via} />
       <Text style={[styles.date, { color: theme.textColorLight }]}>
@@ -70,25 +76,29 @@ const PopUpMenu = ({ theme }) => {
       fontSize: 18,
       color: theme.textColorCard,
     },
-    optionsContainer: {
-      padding: 10,
-      borderRadius: 8,
-      backgroundColor: theme.backgroundColor,
-    },
+    optionsContainer: [
+      Styles.AppBorderRadiusDefault,
+      {
+        padding: 10,
+        backgroundColor: theme.backgroundColor,
+      },
+    ],
   };
 
   return (
     <Menu>
       <MenuTrigger>
         <TouchableOpacity
-          style={{
-            borderRadius: 8,
-            backgroundColor: theme.boxBackground,
-            margin: 5,
-            width: 35,
-            height: 32,
-            alignSelf: "flex-end",
-          }}
+          style={[
+            Styles.AppBorderRadiusSmall,
+            {
+              backgroundColor: theme.boxBackground,
+              margin: 5,
+              width: 35,
+              height: 32,
+              alignSelf: "flex-end",
+            },
+          ]}
         >
           <MaterialCommunityIcons
             name="dots-vertical"

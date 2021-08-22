@@ -1,6 +1,6 @@
 import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
-import Styles from "../styles/Styles";
+import Styles from "../../styles/Styles";
 
 export default ModalButton = ({ onPress, title, theme }) => {
   return (

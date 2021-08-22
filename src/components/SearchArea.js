@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Styles from "../styles/Styles";
 import { TouchableOpacity } from "react-native";
+import CardModal from "./modal/CardModal";
 
 export default SearchArea = ({ emails, searchTerm, setSearchTerm, theme }) => {
+  const [addModalVisible, setAddModalVisible] = useState(false);
+
   return (
     <View style={[styles.search, { backgroundColor: theme.backgroundColor }]}>
       <View>
         <TouchableOpacity
+          onPress={() => {
+            setAddModalVisible(true);
+          }}
           style={[
             styles.button,
+            Styles.AppBorderRadiusSmall,
             {
               borderColor: theme.boxBackground,
               backgroundColor: theme.boxBackground,
@@ -20,7 +27,11 @@ export default SearchArea = ({ emails, searchTerm, setSearchTerm, theme }) => {
           <Feather style={{ color: theme.boxText }} size={20} name="plus" />
         </TouchableOpacity>
       </View>
-
+      <CardModal
+        theme={theme}
+        modalVisible={addModalVisible}
+        onClose={() => setAddModalVisible(false)}
+      />
       <View
         style={[
           {
@@ -62,6 +73,7 @@ export default SearchArea = ({ emails, searchTerm, setSearchTerm, theme }) => {
       <View
         style={[
           styles.button,
+          Styles.AppBorderRadiusSmall,
           {
             borderColor: theme.boxBackground,
             backgroundColor: theme.boxBackground,
@@ -95,7 +107,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 8,
     borderWidth: 1,
     marginHorizontal: 5,
   },

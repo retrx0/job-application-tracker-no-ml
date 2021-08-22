@@ -10,7 +10,7 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import ModalButton from "../components/ModalButton";
+import ModalButton from "../components/modal/ModalButton";
 import ThemeContext from "../context/ThemeContext";
 import UserContext from "../context/UserContext";
 import { PrivacyPolicyText } from "../files/Privacy";

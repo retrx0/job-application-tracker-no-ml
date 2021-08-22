@@ -1,7 +1,8 @@
-import { useColorScheme, Appearance } from "react-native";
+import { useColorScheme, Appearance, StatusBar } from "react-native";
 import { useTheme, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
+import Keys from "../auth/Keys";
 
 const ThemeContext = React.createContext();
 
@@ -64,16 +65,16 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     Appearance.addChangeListener(async ({ colorScheme }) => {
-      const _sys_theme = await AsyncStorage.getItem("@auto-dark-mode");
+      const _sys_theme = await AsyncStorage.getItem(Keys.autoDarkMode);
       if (_sys_theme === "true") {
         setTheme(colorScheme === "dark" ? darkTheme : lightTheme);
       }
     });
 
-    AsyncStorage.multiGet(["@dark-mode", "@auto-dark-mode"]).then((res) => {
+    AsyncStorage.multiGet([Keys.darkMode, Keys.autoDarkMode]).then((res) => {
+      const darkmode = res[0][1];
+      const auto_dark_mode = res[1][1];
       if (res !== null) {
-        const darkmode = res[0][1];
-        const auto_dark_mode = res[1][1];
         if (auto_dark_mode === "true") {
           sys_theme === "dark" ? setTheme(darkTheme) : setTheme(lightTheme);
         } else {
@@ -82,6 +83,9 @@ export const ThemeProvider = ({ children }) => {
       } else {
         sys_theme === "dark" ? setTheme(darkTheme) : setTheme(lightTheme);
       }
+      darkmode === "true"
+        ? StatusBar.setBarStyle("dark-content")
+        : StatusBar.setBarStyle("light-content");
     });
   }, []);
   return (

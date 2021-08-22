@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useState, useEffect } from "react";
+import Keys from "../auth/Keys";
 
 const UserContext = React.createContext();
 
@@ -18,12 +19,12 @@ export const UserProvider = ({ children }) => {
 
   const setAndSaveUser = (user) => {
     setUser(user);
-    if (user !== null) AsyncStorage.setItem("@token", JSON.stringify(user));
+    if (user !== null) AsyncStorage.setItem(Keys.token, JSON.stringify(user));
   };
 
   useEffect(() => {
     const set = async () => {
-      const token = await AsyncStorage.getItem("@token");
+      const token = await AsyncStorage.getItem(Keys.token);
       if (token !== null) {
         setUser(JSON.parse(token));
       }

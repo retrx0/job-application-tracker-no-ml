@@ -4,6 +4,7 @@ import Badge from "./badge/Badge";
 import ThemeContext from "../context/ThemeContext";
 import NotifyContext from "../context/NotifyContext";
 import Animated from "react-native-reanimated";
+import Styles from "../styles/Styles";
 
 export default Tab = ({ state, descriptors, navigation, position }) => {
   const { theme } = useContext(ThemeContext);
@@ -79,26 +80,28 @@ export default Tab = ({ state, descriptors, navigation, position }) => {
             style={{ flex: 1, height: 40, margin: 5, justifyContent: "center" }}
           >
             <Animated.View
-              style={{
-                opacity: opacity,
-                flex: 1,
-                backgroundColor: theme.boxBackground,
-                borderRadius: 8,
-                zIndex: -1,
-                position: "absolute",
-                top: 0,
-                right: 0,
-                left: 0,
-                bottom: 0,
-                justifyContent: "center",
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
+              style={[
+                Styles.AppBorderRadiusDefault,
+                {
+                  opacity: opacity,
+                  flex: 1,
+                  backgroundColor: theme.boxBackground,
+                  zIndex: -1,
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  left: 0,
+                  bottom: 0,
+                  justifyContent: "center",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowColor: "#000",
+                  shadowOpacity: opacityShadow,
+                  shadowRadius: shadowSpread,
                 },
-                shadowColor: "#000",
-                shadowOpacity: opacityShadow,
-                shadowRadius: shadowSpread,
-              }}
+              ]}
             ></Animated.View>
             <TouchableOpacity
               accessibilityRole="button"

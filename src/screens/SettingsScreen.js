@@ -24,6 +24,9 @@ import { ScrollView } from "react-native-gesture-handler";
 import PreferenceButton from "../pref/PreferenceButton";
 import Preference from "../pref/Preference";
 import Keys from "../auth/Keys";
+import Styles from "../styles/Styles";
+import ProfileView from "../components/settings/ProfileView";
+import SectionDivider from "../components/settings/SectionDivider";
 
 const SettingsScreen = ({ navigation }) => {
   const [darkMode, setDarkMode] = useState(false);
@@ -92,7 +95,7 @@ const SettingsScreen = ({ navigation }) => {
           <View
             style={[
               styles.button,
-              styles.dropShadow,
+              Styles.dropShadow,
               {
                 borderRadius: 8,
                 backgroundColor: theme.boxBackground,
@@ -193,59 +196,6 @@ const onShare = async () => {
   }
 };
 
-const SectionDivider = ({ title, theme }) => {
-  return (
-    <View
-      style={{
-        marginVertical: 5,
-        paddingHorizontal: 10,
-        flexDirection: "row",
-        height: 30,
-        alignItems: "center",
-        alignContent: "center",
-      }}
-    >
-      <Text style={{ color: theme.textColorLight, fontSize: 18 }}>{title}</Text>
-    </View>
-  );
-};
-
-const ProfileView = ({ theme }) => {
-  const [result, setResult] = useState({
-    user: {
-      name: "",
-      photoUrl:
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-    },
-  });
-  const getResult = () => {
-    const res = AsyncStorage.getItem("@token").then((r) => {
-      setResult(JSON.parse(r));
-      return JSON.parse(r);
-    });
-  };
-  useEffect(() => {
-    getResult();
-  }, []);
-  return (
-    <View
-      style={[
-        styles.profile,
-        styles.dropShadow,
-        { backgroundColor: theme.backgroundColorAlt },
-      ]}
-    >
-      <Image
-        style={{ height: 50, width: 50, borderRadius: 50, margin: 10 }}
-        source={{ uri: result.user.photoUrl }}
-      />
-      <Text style={{ color: theme.textColor, fontSize: 20, fontWeight: "500" }}>
-        {result.user.name}
-      </Text>
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
   title: {
     fontSize: 40,
@@ -261,24 +211,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: 80,
     height: 50,
-  },
-  profile: {
-    height: 80,
-    marginVertical: 10,
-    marginHorizontal: 10,
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  dropShadow: {
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 4,
   },
 });
 

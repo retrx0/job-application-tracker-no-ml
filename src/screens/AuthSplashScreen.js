@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useContext, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, StatusBar, Text } from "react-native";
+import Keys from "../auth/Keys";
 import ThemeContext from "../context/ThemeContext";
 import UserContext from "../context/UserContext";
 
@@ -9,7 +10,7 @@ const AuthSplashScreen = ({ navigation }) => {
 
   useEffect(() => {
     const resolve = async () => {
-      const _token = await AsyncStorage.getItem("@token");
+      const _token = await AsyncStorage.getItem(Keys.token);
       if (_token !== null) {
         navigation.replace("Main", { screen: "Home" });
       } else {
