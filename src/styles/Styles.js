@@ -9,6 +9,12 @@ export default Styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowRadius: 2,
-    elevation: 4,
+    elevation: 3,
+  },
+  AppBorderRadiusDefault: {
+    borderRadius: 15,
+  },
+  AppBorderRadiusSmall: {
+    borderRadius: 8,
   },
 });

@@ -13,7 +13,7 @@ import {
   Alert,
   Platform,
 } from "react-native";
-import Card from "../components/Card";
+import Card from "../components/card/Card";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 import ThemeContext from "../context/ThemeContext";
@@ -22,6 +22,7 @@ import UserContext from "../context/UserContext";
 import NotifyContext from "../context/NotifyContext";
 import { credentials } from "../auth/Auth";
 import SearchArea from "../components/SearchArea";
+import Keys from "../auth/Keys";
 
 export const isAndroid = () => Platform.OS === "android";
 
@@ -37,10 +38,11 @@ const SectionScreen = ({ navigation, route }) => {
   const { setBadge, getBadge } = useContext(NotifyContext);
 
   useEffect(() => {
-
     //AsyncStorage.clear();
 
-    const startApplyingDate = String(startDate).replace("-", "/");
+    console.log(
+      "Selected start applying date from section screen: " + startDate
+    );
     const get = async (constraint) => {
       // Fetch Emails
       const data = await fetch(
@@ -53,7 +55,7 @@ const SectionScreen = ({ navigation, route }) => {
       )
         .then((d) => d.json())
         .catch((e) => {
-          throw new e();
+          console.log(e);
         });
       let tmp = [];
       if (data.resultSizeEstimate > 0) {
@@ -67,7 +69,7 @@ const SectionScreen = ({ navigation, route }) => {
     };
 
     const resolveModalAndSetDataWithBadge = (data, tmp_eml) => {
-      console.log(data);
+      console.log("Resolving and setting badge");
       if (data[0].length > 0) {
         setBadge(sectionName, true, data[0].length);
       }
@@ -77,19 +79,21 @@ const SectionScreen = ({ navigation, route }) => {
         `@${sectionName}-emails`,
         JSON.stringify(data[0].concat(tmp_eml))
       );
+      console.log("Saved new email data, badge set to : " + data[0].length);
     };
 
     //Check if emails are stored
+    console.log("Checking if email data is stored");
     AsyncStorage.getItem(`@${sectionName}-emails`).then((res) => {
       if (res !== null) {
-        console.log("Saved Emails Found, Fetching new emails");
+        console.log("Saved emails found, Fetching new emails");
         let _tmp_email = JSON.parse(res);
         setEmails(_tmp_email);
         AsyncStorage.getItem(`@${sectionName}-time-stamp`).then((time) => {
           if (time !== null) {
-            console.log(time); //1614819682
+            console.log("Previous saved login time: " + time); //1614819682
             get(`after:${time}`).then((_data) => {
-              console.log(_data);
+              console.log("New data: " + _data);
               if (_data[1].error !== undefined) {
                 console.log(
                   "Error, could not fetch new emails. Requesting new access token"
@@ -111,12 +115,15 @@ const SectionScreen = ({ navigation, route }) => {
                     if (__data.error === undefined) {
                       user.accessToken = __data.access_token;
                       setUser(user);
-                      AsyncStorage.setItem("@token", JSON.stringify(user));
+                      AsyncStorage.setItem(Keys.token, JSON.stringify(user));
                       get(`after:${time}`).then((__eml) => {
                         resolveModalAndSetDataWithBadge(__eml, _tmp_email);
                       });
                     }
-                  });
+                  })
+                  .catch((e) =>
+                    console.log("Error requesting new access token " + e)
+                  );
               } else {
                 resolveModalAndSetDataWithBadge(_data, _tmp_email);
               }
@@ -131,14 +138,8 @@ const SectionScreen = ({ navigation, route }) => {
       } else {
         console.log("No Saved Emails Found, Fetching new set of emails");
         // Store Emails
-        const year = new Date().getFullYear();
-        get(
-          `after:${
-            startApplyingDate.length === 0
-              ? String(year - 2).concat("/01/01")
-              : startApplyingDate
-          }`
-        ).then((_data_) => {
+        get(`after:${startDate}`).then((_data_) => {
+          console.log("Result size estimate: " + _data_[1].resultSizeEstimate);
           setEmails(_data_[0]);
           let stamp = Math.floor(new Date().getTime() / 1000);
           AsyncStorage.setItem(
@@ -151,7 +152,7 @@ const SectionScreen = ({ navigation, route }) => {
                 `@${sectionName}-time-stamp`,
                 JSON.stringify(stamp)
               );
-              console.log("successfully saved emails");
+              console.log("Successfully saved emails");
             })
             .catch((e) => {
               setModalVisible((p) => !p);
@@ -168,7 +169,7 @@ const SectionScreen = ({ navigation, route }) => {
   return (
     <View style={{ backgroundColor: theme.backgroundColor, flex: 1 }}>
       <SafeAreaView style={[{ flex: 1 }]}>
-        <Modal visible={modalVisible} transparent={true} animationType={"fade"}>
+        {/* <Modal visible={modalVisible} transparent={true} animationType={"fade"}>
           <View
             style={{
               flex: 1,
@@ -183,17 +184,17 @@ const SectionScreen = ({ navigation, route }) => {
               size={"large"}
               color={theme.textColor}
             />
-            {/* <Text style={{ color: theme.textColor, fontSize: 16, margin: 10 }}>
+            { <Text style={{ color: theme.textColor, fontSize: 16, margin: 10 }}>
               Please wait a bit...
-            </Text> */}
+            </Text> }
           </View>
-        </Modal>
+        </Modal> */}
         <FlatList
           style={{ flex: 1, backgroundColor: theme.backgroundColor }}
           showsVerticalScrollIndicator={true}
           data={emails.filter(
             (item) =>
-              item.name.toUpperCase().includes(searchTerm.toUpperCase()) ||
+              item.from.toUpperCase().includes(searchTerm.toUpperCase()) ||
               item.address.toUpperCase().includes(searchTerm.toUpperCase())
           )}
           onScroll={() => {}}
@@ -206,7 +207,7 @@ const SectionScreen = ({ navigation, route }) => {
             <SearchArea
               emails={emails.filter(
                 (item) =>
-                  item.name.toUpperCase().includes(searchTerm.toUpperCase()) ||
+                  item.from.toUpperCase().includes(searchTerm.toUpperCase()) ||
                   item.address.toUpperCase().includes(searchTerm.toUpperCase())
               )}
               searchTerm={searchTerm}
@@ -224,9 +225,10 @@ const SectionScreen = ({ navigation, route }) => {
           renderItem={({ item }) => {
             return (
               <Card
-                title={item.name}
-                subject={item.subject}
-                email={item.address}
+                from={item.from}
+                date={item.date}
+                address={item.address}
+                section={sectionName}
               />
             );
           }}
@@ -244,30 +246,30 @@ const getEmail = async ({ user, item }) => {
     }
   );
   let val = await ret.json();
-  let email = null;
+  let email = { from: "", address: "", date: "", subject: "", via: "" };
   val.payload.headers.forEach((e) => {
     let subject = "";
-    let name = "";
+    let from = "";
     let address = "";
     let date = "";
     if (e.name === "From") {
       var head = e.value;
       var str = String(head).split("<");
-      name = String(str[0]).trim();
+      from = String(str[0]).trim();
       if (str[1]) address = String(str[1]).substr(0, str[1].length - 1);
-      email = { name, address, subject };
+      email = { from, address, subject };
     }
-    // if ((e.name = "Date")) {
-    //   date = e.value;
-    //   email = { ...email, date };
-    // }
+
     if (e.name === "Subject") {
       subject = e.value;
       email = { ...email, subject };
     }
     return email;
   });
-  return email;
+
+  if (email.from === "LinkedIn")
+    email.from = String(email.subject).split(RegExp(" at "))[1].trim();
+  return { ...email, date: val.internalDate };
 };
 
 const styles = StyleSheet.create({

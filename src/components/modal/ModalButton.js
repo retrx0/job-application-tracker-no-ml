@@ -1,6 +1,6 @@
 import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
-import Styles from "../styles/Styles";
+import Styles from "../../styles/Styles";
 
 export default ModalButton = ({ onPress, title, theme }) => {
   return (
@@ -8,19 +8,16 @@ export default ModalButton = ({ onPress, title, theme }) => {
       style={{
         alignItems: "center",
         padding: 5,
-        position: "absolute",
-        bottom: 70,
-        left: 0,
-        right: 0,
+        alignSelf: "center",
       }}
       onPress={onPress}
     >
       <View
         style={[
           Styles.dropShadow,
+          Styles.AppBorderRadiusDefault,
           {
             backgroundColor: theme.boxBackground,
-            borderRadius: 8,
             padding: 5,
           },
         ]}

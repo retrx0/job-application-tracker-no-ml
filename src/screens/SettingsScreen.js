@@ -23,6 +23,10 @@ import WebView from "react-native-webview";
 import { ScrollView } from "react-native-gesture-handler";
 import PreferenceButton from "../pref/PreferenceButton";
 import Preference from "../pref/Preference";
+import Keys from "../auth/Keys";
+import Styles from "../styles/Styles";
+import ProfileView from "../components/settings/ProfileView";
+import SectionDivider from "../components/settings/SectionDivider";
 
 const SettingsScreen = ({ navigation }) => {
   const [darkMode, setDarkMode] = useState(false);
@@ -31,11 +35,8 @@ const SettingsScreen = ({ navigation }) => {
   const { theme, setTheme, lightTheme, darkTheme } = useContext(ThemeContext);
   const sys_theme = useColorScheme();
 
-  const auto_dark_mode_key = "@auto-dark-mode";
-  const dark_mode_key = "@dark-mode";
-
   useEffect(() => {
-    AsyncStorage.multiGet(["@auto-dark-mode", "@dark-mode"]).then((data) => {
+    AsyncStorage.multiGet([Keys.autoDarkMode, Keys.darkMode]).then((data) => {
       if (data !== null) {
         const adm = data[0][1] === "true" ? true : false;
         const dm = data[1][1] === "true" ? true : false;
@@ -52,7 +53,7 @@ const SettingsScreen = ({ navigation }) => {
         <ProfileView theme={theme} />
         <SectionDivider title="Appearance" theme={theme} />
         <Preference
-          prefName={auto_dark_mode_key}
+          prefName={Keys.autoDarkMode}
           value={autoDarkMode}
           disabled={false}
           onChange={(p) => {
@@ -68,7 +69,7 @@ const SettingsScreen = ({ navigation }) => {
           name="Auto dark mode"
         />
         <Preference
-          prefName={dark_mode_key}
+          prefName={Keys.darkMode}
           value={darkMode}
           disabled={autoDarkMode}
           onChange={(p) => {
@@ -94,7 +95,7 @@ const SettingsScreen = ({ navigation }) => {
           <View
             style={[
               styles.button,
-              styles.dropShadow,
+              Styles.dropShadow,
               {
                 borderRadius: 8,
                 backgroundColor: theme.boxBackground,
@@ -195,59 +196,6 @@ const onShare = async () => {
   }
 };
 
-const SectionDivider = ({ title, theme }) => {
-  return (
-    <View
-      style={{
-        marginVertical: 5,
-        paddingHorizontal: 10,
-        flexDirection: "row",
-        height: 30,
-        alignItems: "center",
-        alignContent: "center",
-      }}
-    >
-      <Text style={{ color: theme.textColorLight, fontSize: 18 }}>{title}</Text>
-    </View>
-  );
-};
-
-const ProfileView = ({ theme }) => {
-  const [result, setResult] = useState({
-    user: {
-      name: "",
-      photoUrl:
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-    },
-  });
-  const getResult = () => {
-    const res = AsyncStorage.getItem("@token").then((r) => {
-      setResult(JSON.parse(r));
-      return JSON.parse(r);
-    });
-  };
-  useEffect(() => {
-    getResult();
-  }, []);
-  return (
-    <View
-      style={[
-        styles.profile,
-        styles.dropShadow,
-        { backgroundColor: theme.backgroundColorAlt },
-      ]}
-    >
-      <Image
-        style={{ height: 50, width: 50, borderRadius: 50, margin: 10 }}
-        source={{ uri: result.user.photoUrl }}
-      />
-      <Text style={{ color: theme.textColor, fontSize: 20, fontWeight: "500" }}>
-        {result.user.name}
-      </Text>
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
   title: {
     fontSize: 40,
@@ -263,24 +211,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: 80,
     height: 50,
-  },
-  profile: {
-    height: 80,
-    marginVertical: 10,
-    marginHorizontal: 10,
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  dropShadow: {
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 4,
   },
 });
 
