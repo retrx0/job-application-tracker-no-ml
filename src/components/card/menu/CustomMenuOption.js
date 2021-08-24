@@ -5,7 +5,12 @@ import { MenuOption } from "react-native-popup-menu";
 
 const CustomMenuOption = ({ text, onClick, textColor, IconComponent }) => {
   return (
-    <MenuOption onSelect={() => alert(text)}>
+    <MenuOption
+      onSelect={() => {
+        console.log("Selected:" + text);
+        onClick();
+      }}
+    >
       <View
         style={{
           flexDirection: "row",

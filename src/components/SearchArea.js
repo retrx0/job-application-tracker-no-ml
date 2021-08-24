@@ -28,6 +28,7 @@ export default SearchArea = ({ emails, searchTerm, setSearchTerm, theme }) => {
         </TouchableOpacity>
       </View>
       <CardModal
+        headerText={"Add a new job"}
         theme={theme}
         modalVisible={addModalVisible}
         onClose={() => setAddModalVisible(false)}

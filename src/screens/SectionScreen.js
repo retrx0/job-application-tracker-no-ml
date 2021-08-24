@@ -224,7 +224,12 @@ const SectionScreen = ({ navigation, route }) => {
           keyExtractor={(item, id) => (id * Math.random() * 10).toString()}
           renderItem={({ item }) => {
             return (
-              <Card from={item.from} date={item.date} address={item.address} />
+              <Card
+                from={item.from}
+                date={item.date}
+                address={item.address}
+                section={sectionName}
+              />
             );
           }}
         />

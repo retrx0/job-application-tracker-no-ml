@@ -8,10 +8,7 @@ export default ModalButton = ({ onPress, title, theme }) => {
       style={{
         alignItems: "center",
         padding: 5,
-        position: "absolute",
-        bottom: 70,
-        left: 0,
-        right: 0,
+        alignSelf: "center",
       }}
       onPress={onPress}
     >
