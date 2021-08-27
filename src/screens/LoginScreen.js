@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   SafeAreaView,
-  Button,
   TouchableOpacity,
   Image,
   Alert,
@@ -14,8 +13,7 @@ import * as Google from "expo-google-app-auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UserContext from "../context/UserContext";
 import ThemeContext from "../context/ThemeContext";
-import NotifyContext from "../context/NotifyContext";
-import { credentials } from "../auth/Auth";
+import { credentials } from "../auth/Credentials";
 import Styles from "../styles/Styles";
 
 export const isAndroid = () => Platform.OS === "android";

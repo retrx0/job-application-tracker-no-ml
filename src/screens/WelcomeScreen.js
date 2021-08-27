@@ -84,7 +84,7 @@ const WelcomeScreen = ({ navigation }) => {
                 },
               ]}
             >
-              Select a Date
+              {startDate}
             </Text>
           </TouchableOpacity>
           <DateTimePickerModal
@@ -113,32 +113,6 @@ const WelcomeScreen = ({ navigation }) => {
               setDatePickerVisibility(false);
             }}
           />
-          {/* <TextInput
-            style={[
-              {
-                alignSelf: "center",
-                backgroundColor: theme.backgroundColorAlt,
-                color: theme.textColor,
-                width: 200,
-                height: 50,
-                fontSize: 20,
-                borderRadius: 8,
-                margin: 5,
-              },
-              Styles.dropShadow,
-            ]}
-            textAlign={"center"}
-            textAlignVertical={"center"}
-            keyboardType={"numbers-and-punctuation"}
-            autoCorrect={false}
-            autoCapitalize={"none"}
-            returnKeyType={"done"}
-            placeholder="2021-01"
-            maxLength={7}
-            underlineColorAndroid={theme.colorPrimary}
-            placeholderTextColor={theme.textColorLight}
-            onChangeText={(t) => setDate(t)}
-          /> */}
           <ModalButton title="Next" onPress={dateModalOnPress} theme={theme} />
         </View>
       </Modal>
@@ -149,18 +123,17 @@ const WelcomeScreen = ({ navigation }) => {
         style={{
           flex: 1,
           justifyContent: "center",
+          backgroundColor: theme.backgroundColor,
         }}
       >
         <View
           style={{
-            flex: 1,
             justifyContent: "center",
             backgroundColor: theme.backgroundColor,
           }}
         >
           <ScrollView
             style={{
-              flex: 1,
               backgroundColor: theme.backgroundColor,
               padding: 10,
             }}

@@ -20,7 +20,7 @@ const CardModalInput = ({ inputLabel, theme, onChange, autoFillText }) => {
         ]}
       >
         <TextInput
-          autoCorrect={true}
+          autoCapitalize={"none"}
           defaultValue={autoFillText}
           onChangeText={onChange}
           style={[
