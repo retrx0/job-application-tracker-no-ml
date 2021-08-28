@@ -19,12 +19,13 @@ import Trash from "react-native-bootstrap-icons/icons/trash";
 import PencilSquare from "react-native-bootstrap-icons/icons/pencil-square";
 import CustomMenuOption from "./../card/menu/CustomMenuOption";
 import CardModal from "../modal/CardModal";
+import { deleteJob, recategorizeJob } from "../../controller/JobController";
+import { getDateInString } from "../../util/TimeUtil";
+import RecategorizeModal from "../modal/RecategorizeModal";
 
-const Card = ({ from, date, address, via, section }) => {
+const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
   const { theme } = useContext(ThemeContext);
-  var dt = new Date(0);
-  dt.setUTCSeconds(date / 1000);
-  const _date = dt.toDateString();
+  const _date = getDateInString(date);
 
   if (String(from).startsWith('"')) {
     let rgx = new RegExp(`"`, "g");
@@ -38,9 +39,9 @@ const Card = ({ from, date, address, via, section }) => {
   )
     from = String(from).split("@")[1].trim();
 
-  if (address) via = String(address).split("@")[1].trim();
-
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [recategorizeModalVisible, setRecategorizeModalVisible] =
+    useState(false);
 
   const PopUpMenu = ({ theme }) => {
     const customMenuStyle = {
@@ -88,19 +89,26 @@ const Card = ({ from, date, address, via, section }) => {
             text={"Recategorize"}
             IconComponent={Arrow}
             textColor={theme.textColorCard}
-            onClick={() => console.log("recat")}
+            onClick={() => {
+              setRecategorizeModalVisible((v) => !v);
+              //recategorizeJob(jobItem, "Interview", callBack);
+            }}
           />
           <CustomMenuOption
             text={"Edit"}
             IconComponent={PencilSquare}
             textColor={theme.textColorCard}
-            onClick={() => setEditModalVisible(true)}
+            onClick={() => {
+              setEditModalVisible(true);
+            }}
           />
           <CustomMenuOption
             text={"Delete"}
             IconComponent={Trash}
             textColor={theme.textColorDanger}
-            onClick={() => console.log("delete")}
+            onClick={() => {
+              deleteJob(jobItem, callBack);
+            }}
           />
         </MenuOptions>
       </Menu>
@@ -117,12 +125,23 @@ const Card = ({ from, date, address, via, section }) => {
       ]}
     >
       <CardModal
+        jobItem={jobItem}
+        callBack={callBack}
+        actionType={"edit"}
         headerText={"Edit a job"}
         theme={theme}
         modalVisible={editModalVisible}
         onClose={() => setEditModalVisible(false)}
         autoFillData={{ from, via, date }}
         section={section}
+      />
+      <RecategorizeModal
+        theme={theme}
+        shown={recategorizeModalVisible}
+        setShown={setRecategorizeModalVisible}
+        sectionName={section}
+        callBack={callBack}
+        jobItem={jobItem}
       />
       <View
         style={{
@@ -166,7 +185,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     fontSize: 16,
     fontWeight: "500",
-    padding: 5,
+    padding: 10,
   },
 });
 

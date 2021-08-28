@@ -5,7 +5,10 @@ import Styles from "../styles/Styles";
 import { TouchableOpacity } from "react-native";
 import CardModal from "./modal/CardModal";
 
-export default SearchArea = ({ emails, searchTerm, setSearchTerm, theme }) => {
+export default SearchArea = (
+  { emails, searchTerm, setSearchTerm, theme },
+  callBack
+) => {
   const [addModalVisible, setAddModalVisible] = useState(false);
 
   return (
@@ -28,10 +31,12 @@ export default SearchArea = ({ emails, searchTerm, setSearchTerm, theme }) => {
         </TouchableOpacity>
       </View>
       <CardModal
+        actionType={"add"}
         headerText={"Add a new job"}
         theme={theme}
         modalVisible={addModalVisible}
         onClose={() => setAddModalVisible(false)}
+        callBack={callBack}
       />
       <View
         style={[

@@ -4,84 +4,17 @@ import {
   StyleSheet,
   Text,
   SafeAreaView,
-  Button,
   TouchableOpacity,
   Image,
-  Alert,
-  Platform,
 } from "react-native";
-import * as Google from "expo-google-app-auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import UserContext from "../context/UserContext";
 import ThemeContext from "../context/ThemeContext";
-import NotifyContext from "../context/NotifyContext";
-import { credentials } from "../auth/Auth";
 import Styles from "../styles/Styles";
-
-export const isAndroid = () => Platform.OS === "android";
-
-const signInWithGoogleAsync = async () => {
-  try {
-    const result = await Google.logInAsync({
-      clientId: isAndroid()
-        ? credentials.androidClientId
-        : credentials.iosClientId,
-      iosClientId: credentials.iosClientId,
-      androidClientId: credentials.androidClientId,
-      scopes: credentials.scopes,
-    });
-
-    if (result.type === "success") {
-      return result;
-    } else {
-      return { cancelled: true };
-    }
-  } catch (e) {
-    return { error: true };
-  }
-};
-
-const loginAuth = async ({ navigation, user, setUser, setAndSaveUser }) => {
-  try {
-    const stored_result = await AsyncStorage.getItem("@token");
-    const welcomModalShown = await AsyncStorage.getItem("@welcome-modal");
-    if (stored_result !== null) {
-      setUser(JSON.parse(stored_result));
-      welcomModalShown !== null
-        ? navigation.navigate("Main", {
-            screen: "Home",
-          })
-        : navigation.navigate("Welcome");
-      AsyncStorage.setItem("@welcome-modal", "true");
-    } else {
-      var result = await signInWithGoogleAsync();
-      if (result.cancelled === true) {
-        navigation.navigate("Login");
-      } else if (result.error === true) {
-        navigation.navigate("Login");
-      } else {
-        setAndSaveUser(result);
-        welcomModalShown !== null
-          ? navigation.navigate("Main", {
-              screen: "Home",
-            })
-          : navigation.navigate("Welcome");
-        AsyncStorage.setItem("@welcome-modal", "true");
-      }
-    }
-  } catch (e) {
-    console.log(e);
-    navigation.navigate("Login");
-    Alert.alert(
-      "Login Problem",
-      "There was a problem when trying to login, please close the application and open again if problem persist"
-    );
-  }
-};
+import { loginAuth } from "../auth/AuthFlow";
 
 const LoginScreen = ({ navigation }) => {
   const { user, setUser, setAndSaveUser } = useContext(UserContext);
-  const { theme, darkTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
       <Text style={[styles.title, { color: theme.textColor }]}>Login</Text>
