@@ -5,7 +5,6 @@ export const testData = [
     via: "linkedIn",
     subject: "welcome to apple",
     date: Math.floor(new Date().getTime()),
-    sectionName: "Applied",
   },
   {
     from: "Micorsoft",
@@ -13,7 +12,6 @@ export const testData = [
     via: "Join.com",
     subject: "welcome to microsoft",
     date: Math.floor(new Date().getTime()),
-    sectionName: "Applied",
   },
   {
     from: "Google",
@@ -21,7 +19,6 @@ export const testData = [
     via: "Glassdoor",
     subject: "welcome to google",
     date: Math.floor(new Date().getTime()),
-    sectionName: "Applied",
   },
   {
     from: "BlackRock",
@@ -29,6 +26,5 @@ export const testData = [
     via: "Indeed",
     subject: "welcome to blackrock",
     date: Math.floor(new Date().getTime()),
-    sectionName: "Applied",
   },
 ];

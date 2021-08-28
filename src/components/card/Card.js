@@ -21,6 +21,7 @@ import CustomMenuOption from "./../card/menu/CustomMenuOption";
 import CardModal from "../modal/CardModal";
 import { deleteJob, recategorizeJob } from "../../controller/JobController";
 import { getDateInString } from "../../util/TimeUtil";
+import RecategorizeModal from "../modal/RecategorizeModal";
 
 const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
   const { theme } = useContext(ThemeContext);
@@ -39,6 +40,8 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
     from = String(from).split("@")[1].trim();
 
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [recategorizeModalVisible, setRecategorizeModalVisible] =
+    useState(false);
 
   const PopUpMenu = ({ theme }) => {
     const customMenuStyle = {
@@ -87,7 +90,8 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
             IconComponent={Arrow}
             textColor={theme.textColorCard}
             onClick={() => {
-              recategorizeJob(jobItem, "Interview", callBack);
+              setRecategorizeModalVisible((v) => !v);
+              //recategorizeJob(jobItem, "Interview", callBack);
             }}
           />
           <CustomMenuOption
@@ -131,6 +135,14 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
         autoFillData={{ from, via, date }}
         section={section}
       />
+      <RecategorizeModal
+        theme={theme}
+        shown={recategorizeModalVisible}
+        setShown={setRecategorizeModalVisible}
+        sectionName={section}
+        callBack={callBack}
+        jobItem={jobItem}
+      />
       <View
         style={{
           flexDirection: "row",
@@ -173,7 +185,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     fontSize: 16,
     fontWeight: "500",
-    padding: 5,
+    padding: 10,
   },
 });
 

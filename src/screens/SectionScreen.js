@@ -22,7 +22,6 @@ import {
   storeTimeStamp,
 } from "../dao/JobDAO";
 import JobCardsContext from "../context/JobCardsContext";
-import { testData } from "../../test/data/TestData";
 import ActivityModal from "../components/modal/ActivityModal";
 import {
   fetchAllEmails,
@@ -84,7 +83,7 @@ const SectionScreen = ({ navigation, route }) => {
               has,
               sectionName
             ).then((_data) => {
-              console.log("New data: " + _data.length);
+              console.log("New data: " + _data[0].length);
               if (_data[1].error !== undefined) {
                 console.log("Could not get new emails. Requesting new token");
                 getRefreshToken(user)

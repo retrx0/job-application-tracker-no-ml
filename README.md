@@ -1,6 +1,6 @@
 # Job Application Tracking App with React Native
 
-Filter all your job applications automatically with a single click, you can ditch the spreadsheet now.
+Filter all your job applications automatically from your email effortlessly!, you can now ditch the spreadsheet.
 
 Only works with a gmail account for now!
 

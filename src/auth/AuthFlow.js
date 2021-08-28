@@ -1,10 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Google from "expo-google-app-auth";
 import { Alert } from "react-native";
-import { getToken } from "../dao/UserDAO";
-import { credentials } from "./Credentials";
+import { getStoredToken, getStoredUserInfo } from "../dao/UserDAO";
+import { credentials, isAndroid } from "./Credentials";
 import Keys from "./Keys";
-import * as Google from "expo-google-app-auth";
 
 const signInWithGoogleAsync = async () => {
   try {
@@ -27,12 +26,17 @@ const signInWithGoogleAsync = async () => {
   }
 };
 
-const loginAuth = async ({ navigation, user, setUser, setAndSaveUser }) => {
+export const loginAuth = async ({
+  navigation,
+  user,
+  setUser,
+  setAndSaveUser,
+}) => {
   try {
-    const stored_result = await getToken();
+    const stored_result = await getStoredUserInfo();
     const welcomModalShown = await AsyncStorage.getItem(Keys.welcomeModal);
     if (stored_result !== null) {
-      setUser(JSON.parse(stored_result));
+      setUser(stored_result);
       welcomModalShown !== null
         ? navigation.navigate("Main", {
             screen: "Home",
@@ -56,7 +60,7 @@ const loginAuth = async ({ navigation, user, setUser, setAndSaveUser }) => {
       }
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
     navigation.navigate("Login");
     Alert.alert(
       "Login Problem",
@@ -65,19 +69,19 @@ const loginAuth = async ({ navigation, user, setUser, setAndSaveUser }) => {
   }
 };
 
-const logOutFlow = async ({ navigation }) => {
-  const accToken = await getToken();
+export const logOutFlow = async ({ navigation }) => {
+  const accToken = await getStoredToken();
+
   if (accToken !== null) {
-    var tmp = JSON.parse(accToken).accessToken;
     Google.logOutAsync({
-      accessToken: tmp,
+      accessToken: accToken,
       iosClientId: credentials.iosClientId,
       androidClientId: credentials.androidClientId,
     }).then(() => {
       navigation.navigate("Login");
       AsyncStorage.clear()
         .then(() => {})
-        .catch((e) => console.log(e));
+        .catch((e) => console.error(e));
     });
   }
 };

@@ -1,3 +1,4 @@
+import { DevSettings } from "react-native";
 import { Alert } from "react-native";
 import { getSectionJobs, storeSectionJobs } from "../dao/JobDAO";
 
@@ -7,7 +8,8 @@ export const addJob = async (jobItem, callBack) => {
     var data = await getSectionJobs(`@${jobItem.sectionName}-emails`);
     data = [...data, jobItem];
     storeSectionJobs(`@${jobItem.sectionName}-emails`, data);
-    if (data) callBack(data);
+    //DevSettings.reload();
+    //if (data) callBack(data);
     console.log("Job added successfully");
   } catch (error) {
     Alert.alert("Couldn't add new job");

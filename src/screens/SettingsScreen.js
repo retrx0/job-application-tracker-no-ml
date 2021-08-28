@@ -4,29 +4,19 @@ import {
   StyleSheet,
   Text,
   SafeAreaView,
-  TouchableOpacity,
-  Image,
-  Switch,
-  Modal,
-  Button,
   Share,
   useColorScheme,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Google from "expo-google-app-auth";
-import { Divider } from "react-native-elements";
 import ThemeContext from "../context/ThemeContext";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
-import marked from "marked";
-import { PrivacyPolicyText } from "../files/Privacy";
-import WebView from "react-native-webview";
-import { ScrollView } from "react-native-gesture-handler";
-import PreferenceButton from "../pref/PreferenceButton";
-import Preference from "../pref/Preference";
+import PreferenceButton from "../components/pref/PreferenceButton";
+import Preference from "../components/pref/Preference";
 import Keys from "../auth/Keys";
-import Styles from "../styles/Styles";
 import ProfileView from "../components/settings/ProfileView";
 import SectionDivider from "../components/settings/SectionDivider";
+import { logOutFlow } from "../auth/AuthFlow";
+import PrivacyPolicyModal from "../components/modal/PrivacyPolicyModal";
+import ModalButton from "../components/modal/ModalButton";
 
 const SettingsScreen = ({ navigation }) => {
   const [darkMode, setDarkMode] = useState(false);
@@ -91,94 +81,25 @@ const SettingsScreen = ({ navigation }) => {
           theme={theme}
           onPress={() => setPrivacyShown((p) => !p)}
         />
-        <TouchableOpacity style={{}} onPress={() => logOutFlow({ navigation })}>
-          <View
-            style={[
-              styles.button,
-              Styles.dropShadow,
-              {
-                borderRadius: 8,
-                backgroundColor: theme.boxBackground,
-                color: theme.textColor,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                { color: theme.textColor, fontSize: 18, fontWeight: "500" },
-              ]}
-            >
-              Logout
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <Modal
-          presentationStyle="pageSheet"
-          visible={privacyShown}
-          style={{ flex: 1, backgroundColor: theme.backgroundColor }}
-          animationType="slide"
-        >
-          <ScrollView
-            style={{
-              flex: 1,
-              backgroundColor: theme.backgroundColor,
-              padding: 10,
-            }}
-          >
-            <PrivacyPolicyText theme={theme} />
-          </ScrollView>
-
-          <TouchableOpacity
-            style={{
-              alignItems: "center",
-              position: "absolute",
-              bottom: 50,
-              left: 0,
-              right: 0,
-            }}
-            onPress={() => setPrivacyShown((p) => !p)}
-          >
-            <View
-              style={{
-                padding: 5,
-                backgroundColor: theme.backgroundColorAlt,
-                borderRadius: 8,
-                borderColor: theme.borderColor,
-                borderWidth: 1,
-              }}
-            >
-              <Text style={{ color: theme.textColorCard, fontSize: 22 }}>
-                Close
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </Modal>
+        <ModalButton
+          theme={theme}
+          title={"Logout"}
+          onPress={() => logOutFlow({ navigation })}
+        />
+        <PrivacyPolicyModal
+          theme={theme}
+          privacyShown={privacyShown}
+          setPrivacyShown={setPrivacyShown}
+        />
       </SafeAreaView>
     </View>
   );
 };
 
-const logOutFlow = async ({ navigation }) => {
-  const accToken = await AsyncStorage.getItem("@token");
-  if (accToken !== null) {
-    var tmp = JSON.parse(accToken).accessToken;
-    Google.logOutAsync({
-      accessToken: tmp,
-      iosClientId: `575965648407-6rss1rstcgm51q1roa1bhaljjkoni900.apps.googleusercontent.com`,
-      androidClientId: `575965648407-v6itn1o9uuo9fqtrkr7tn3j6n6i712en.apps.googleusercontent.com`,
-    }).then(() => {
-      navigation.navigate("Login");
-      AsyncStorage.clear()
-        .then(() => {})
-        .catch((e) => console.log(e));
-    });
-  }
-};
-
 const onShare = async () => {
   try {
     const result = await Share.share({
-      message: "JobYoke | Find and track your job applications",
+      message: "JobYoke | Find and track your all job applications",
       url: "https://www.jobyoke.com",
       title: "JobYoke",
     });
@@ -192,7 +113,7 @@ const onShare = async () => {
       // dismissed
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 

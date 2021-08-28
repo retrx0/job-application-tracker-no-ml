@@ -1,18 +1,27 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Keys from "../auth/Keys";
 
-export const getToken = async () => {
+export const getStoredUserInfo = async () => {
   try {
-    const accToken = await AsyncStorage.getItem(Keys.token);
-    return accToken !== null ? JSON.parse(accToken).accessToken : null;
+    const user = await AsyncStorage.getItem(Keys.token);
+    return user !== null ? JSON.parse(user) : null;
   } catch (error) {
     console.error("Could not get Token: " + error);
   }
 };
 
-export const setToken = (token) => {
+export const getStoredToken = async () => {
   try {
-    AsyncStorage.setItem(Keys.token, JSON.stringify(token));
+    const accToken = await getStoredUserInfo();
+    return accToken !== null ? accToken.accessToken : null;
+  } catch (error) {
+    console.error("Could not get Token: " + error);
+  }
+};
+
+export const storeUserInfo = (info) => {
+  try {
+    AsyncStorage.setItem(Keys.token, JSON.stringify(info));
   } catch (error) {
     console.error("Could not set Token: " + error);
   }
