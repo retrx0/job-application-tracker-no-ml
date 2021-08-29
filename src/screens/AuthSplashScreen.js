@@ -1,9 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useContext, useEffect } from "react";
-import { View, StyleSheet, SafeAreaView, StatusBar, Text } from "react-native";
+import { View, SafeAreaView, StatusBar, Text } from "react-native";
 import Keys from "../auth/Keys";
 import ThemeContext from "../context/ThemeContext";
-import UserContext from "../context/UserContext";
 
 const AuthSplashScreen = ({ navigation }) => {
   const { theme } = useContext(ThemeContext);
@@ -44,7 +43,5 @@ const AuthSplashScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default AuthSplashScreen;

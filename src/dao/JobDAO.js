@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { getCurrentDateInSeconds } from "../util/TimeUtil";
 
-export const getSectionJobs = async (key) => {
+export const getStoredSectionJobs = async (key) => {
   const data = await AsyncStorage.getItem(key);
   if (data !== null) {
     console.log("Saved emails found in storage");
@@ -23,7 +23,7 @@ export const storeSectionJobs = (key, value) => {
     });
 };
 
-export const getTimeStamp = async (sectionName) => {
+export const getStoredTimeStamp = async (sectionName) => {
   return await AsyncStorage.getItem(`@${sectionName}-time-stamp`);
 };
 

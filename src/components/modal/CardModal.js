@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Modal, View, TextInput, Text, TouchableOpacity } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -6,8 +6,9 @@ import Styles from "../../styles/Styles";
 import CardModalInput from "./CardModalInput";
 import ModalButton from "./ModalButton";
 import { Picker } from "@react-native-picker/picker";
-import { addJob, modifyJob } from "../../controller/JobController";
+import { modifyJob } from "../../service/JobService";
 import { getDateInString } from "../../util/TimeUtil";
+import JobCardContext from "../../context/JobCardContext";
 
 const CardModal = ({
   theme,
@@ -16,7 +17,6 @@ const CardModal = ({
   headerText,
   autoFillData,
   section,
-  callBack,
   actionType,
   jobItem,
 }) => {
@@ -28,7 +28,9 @@ const CardModal = ({
   const [modalVia, setModalVia] = useState(_autoFillData.via);
   const [modalDate, setModalDate] = useState(Math.floor(Date.now()));
 
-  const [modalSelectedSection, setModalSelectedSection] = useState(section);
+  const [modalSelectedSection, setModalSelectedSection] = useState("Applied");
+
+  const { editJob, addJob } = useContext(JobCardContext);
 
   useEffect(() => {
     setModalSelectedSection(section);
@@ -81,6 +83,7 @@ const CardModal = ({
         </TouchableOpacity>
         <Picker
           prompt={"Select Category"}
+          value={modalSelectedSection}
           style={[
             {
               backgroundColor: theme.backgroundColorAlt,
@@ -96,8 +99,8 @@ const CardModal = ({
         >
           <Picker.Item label={"Applied"} value={"Applied"} />
           <Picker.Item label={"Reject"} value={"Rejected"} />
-          <Picker.Item label={"Interview"} value={"Interview"} />
-          <Picker.Item label={"Progress"} value={"Progress"} />
+          <Picker.Item label={"Interview or Progress"} value={"Interview"} />
+          {/* <Picker.Item label={"Progress"} value={"Progress"} /> */}
         </Picker>
         <DateTimePickerModal
           isDarkModeEnabled={theme.dark}
@@ -137,27 +140,24 @@ const CardModal = ({
               });
               switch (actionType) {
                 case "edit":
-                  modifyJob(
-                    jobItem,
-                    {
-                      from: modalCompanyName,
-                      date: modalDate,
-                      via: modalVia,
-                      sectionName: modalSelectedSection,
-                    },
-                    callBack
-                  );
+                  editJob(jobItem, {
+                    from: modalCompanyName,
+                    date: modalDate,
+                    via: modalVia,
+                    sectionName: modalSelectedSection,
+                  });
                   break;
                 case "add":
-                  addJob(
-                    {
-                      from: modalCompanyName,
-                      date: modalDate,
-                      via: modalVia,
-                      sectionName: modalSelectedSection,
-                    },
-                    callBack
-                  );
+                  addJob({
+                    id:
+                      "id" +
+                      Date.now().toString(36) +
+                      Math.random().toString(36).substr(2),
+                    from: modalCompanyName,
+                    date: modalDate,
+                    via: modalVia,
+                    sectionName: modalSelectedSection,
+                  });
                   break;
                 default:
                   break;

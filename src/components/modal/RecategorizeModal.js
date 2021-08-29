@@ -1,20 +1,21 @@
 import { Picker } from "@react-native-picker/picker";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Modal } from "react-native";
 import ModalButton from "./ModalButton";
 import { BlurView } from "expo-blur";
 import Styles from "../../styles/Styles";
-import { recategorizeJob } from "../../controller/JobController";
+// import { recategorizeJob } from "../../service/JobService";
+import JobCardContext from "../../context/JobCardContext";
 
 const RecategorizeModal = ({
   theme,
   shown,
   setShown,
   sectionName,
-  callBack,
   jobItem,
 }) => {
   const [modalSelectedValue, setModalSelectedValue] = useState(sectionName);
+  const { recategorizeJob } = useContext(JobCardContext);
   return (
     <Modal
       transparent={true}
@@ -25,12 +26,11 @@ const RecategorizeModal = ({
       }}
       animationType="fade"
     >
-      <BlurView
-        intensity={90}
-        tint="dark"
+      <View
         style={{
           flex: 1,
           justifyContent: "center",
+          backgroundColor: "rgba(0,0,0,0.3)",
         }}
       >
         <View
@@ -95,12 +95,12 @@ const RecategorizeModal = ({
               title={"Save"}
               onPress={() => {
                 setShown((p) => !p);
-                recategorizeJob(jobItem, modalSelectedValue, callBack);
+                recategorizeJob(jobItem, modalSelectedValue);
               }}
             />
           </View>
         </View>
-      </BlurView>
+      </View>
     </Modal>
   );
 };

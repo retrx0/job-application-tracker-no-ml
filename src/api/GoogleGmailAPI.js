@@ -78,17 +78,21 @@ export const getEmail = async ({ user, item }, sectionName) => {
 
   if (email.from === "LinkedIn")
     email.from = String(email.subject).split(RegExp(" at "))[1].trim();
-  return { ...email, date: val.internalDate };
+  return { ...email, date: val.internalDate, id: val.id };
 };
 
 export const getRefreshToken = async (user) => {
-  const refresh_token = await fetch(
-    `${URLS.REFRESH_TOKEN_URL}?client_id=${
-      isAndroid() ? credentials.androidClientId : credentials.iosClientId
-    }&refresh_token=${user.refreshToken}&grant_type=refresh_token`,
-    {
-      method: "POST",
-    }
-  ).then((res) => res.json());
-  return refresh_token;
+  try {
+    const refresh_token = await fetch(
+      `${URLS.REFRESH_TOKEN_URL}?client_id=${
+        isAndroid() ? credentials.androidClientId : credentials.iosClientId
+      }&refresh_token=${user.refreshToken}&grant_type=refresh_token`,
+      {
+        method: "POST",
+      }
+    ).then((res) => res.json());
+    return refresh_token;
+  } catch (e) {
+    console.error(`Problem getting refresh token: ` + e);
+  }
 };

@@ -1,6 +1,4 @@
 import React, { useState, useContext } from "react";
-import { TextInput } from "react-native";
-import { Alert } from "react-native";
 import {
   View,
   StyleSheet,
@@ -14,7 +12,6 @@ import ModalButton from "../components/modal/ModalButton";
 import ThemeContext from "../context/ThemeContext";
 import UserContext from "../context/UserContext";
 import { PrivacyPolicyText } from "../files/Privacy";
-import Styles from "../styles/Styles";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const WelcomeScreen = ({ navigation }) => {
@@ -43,13 +40,12 @@ const WelcomeScreen = ({ navigation }) => {
         visible={showDataPickerModal}
         style={{
           flex: 1,
-          justifyContent: "center",
+          justifyContent: "flex-start",
         }}
       >
         <View
           style={{
             flex: 1,
-            marginTop: 50,
             justifyContent: "flex-start",
             backgroundColor: theme.backgroundColor,
           }}

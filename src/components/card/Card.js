@@ -19,13 +19,15 @@ import Trash from "react-native-bootstrap-icons/icons/trash";
 import PencilSquare from "react-native-bootstrap-icons/icons/pencil-square";
 import CustomMenuOption from "./../card/menu/CustomMenuOption";
 import CardModal from "../modal/CardModal";
-import { deleteJob, recategorizeJob } from "../../controller/JobController";
 import { getDateInString } from "../../util/TimeUtil";
 import RecategorizeModal from "../modal/RecategorizeModal";
+import JobCardContext from "../../context/JobCardContext";
 
-const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
+const Card = ({ jobItem, from, date, address, via, section }) => {
   const { theme } = useContext(ThemeContext);
   const _date = getDateInString(date);
+
+  const { deleteJob } = useContext(JobCardContext);
 
   if (String(from).startsWith('"')) {
     let rgx = new RegExp(`"`, "g");
@@ -107,7 +109,7 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
             IconComponent={Trash}
             textColor={theme.textColorDanger}
             onClick={() => {
-              deleteJob(jobItem, callBack);
+              deleteJob(jobItem);
             }}
           />
         </MenuOptions>
@@ -126,7 +128,6 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
     >
       <CardModal
         jobItem={jobItem}
-        callBack={callBack}
         actionType={"edit"}
         headerText={"Edit a job"}
         theme={theme}
@@ -140,7 +141,6 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
         shown={recategorizeModalVisible}
         setShown={setRecategorizeModalVisible}
         sectionName={section}
-        callBack={callBack}
         jobItem={jobItem}
       />
       <View

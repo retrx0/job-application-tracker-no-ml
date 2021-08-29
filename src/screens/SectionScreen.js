@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import {
-  View,
-  Text,
-  SafeAreaView,
-  FlatList,
-  ScrollView,
-  VirtualizedList,
-} from "react-native";
+import { View, SafeAreaView, FlatList, VirtualizedList } from "react-native";
 import Card from "../components/card/Card";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
@@ -16,23 +9,18 @@ import NotifyContext from "../context/NotifyContext";
 import SearchArea from "../components/SearchArea";
 import Keys from "../auth/Keys";
 import {
-  getSectionJobs,
-  getTimeStamp,
+  getStoredSectionJobs,
+  getStoredTimeStamp,
   storeSectionJobs,
   storeTimeStamp,
 } from "../dao/JobDAO";
-import JobCardsContext from "../context/JobCardsContext";
+import JobCardContext from "../context/JobCardContext";
 import ActivityModal from "../components/modal/ActivityModal";
-import {
-  fetchAllEmails,
-  getAllJobs,
-  getRefreshToken,
-} from "../api/GoogleGmailAPI";
+import { getAllJobs, getRefreshToken } from "../api/GoogleGmailAPI";
 import useJobEmails from "../hooks/useJobList";
 
 const SectionScreen = ({ navigation, route }) => {
   const { user, setUser, startDate } = useContext(UserContext);
-  const [emails, setEmails] = useState([]);
   const sectionName = route.params.params.name;
   const mustContain = route.params.params.mustContain;
   const has = route.params.params.has;
@@ -40,27 +28,19 @@ const SectionScreen = ({ navigation, route }) => {
   const { theme } = useContext(ThemeContext);
   const [searchTerm, setSearchTerm] = useState("");
   const { setBadge, getBadge } = useContext(NotifyContext);
-
-  const [jobList, setJobList, setSectionJobsFromHook, getSectionJobsFromHook] =
-    useJobEmails();
+  const { jobCardList, addSectionJobs, setJobs } = useContext(JobCardContext);
+  const jobs = jobCardList.filter((i) => i.sectionName == sectionName)[0].data;
 
   const resolveModalAndSetDataWithBadge = (data, tmp_eml) => {
     console.log("Resolving and setting badge");
     if (data[0].length > 0) {
       console.log("New jobs found");
       setBadge(sectionName, true, data[0].length);
-      setEmails((e) => data[0].concat(e));
+      setJobs((e) => data[0].concat(e));
       //setModalVisible((p) => !p);
-      storeSectionJobs(`@${sectionName}-emails`, data[0].concat(tmp_eml));
+      storeSectionJobs(Keys.jobs, data[0].concat(tmp_eml));
       console.log("Saved new email data, badge set to : " + data[0].length);
     }
-  };
-
-  const addToJobList = (item) => {
-    if (
-      !jobList.filter((obj) => obj.sectionName == item.sectionName).length > 0
-    )
-      setJobList((l) => [...l, item]);
   };
 
   useEffect(() => {
@@ -69,11 +49,11 @@ const SectionScreen = ({ navigation, route }) => {
 
     //Check if emails are stored
     console.log("Checking if email data is stored");
-    getSectionJobs(`@${sectionName}-emails`).then((res) => {
+    getStoredSectionJobs(Keys.jobs).then((res) => {
       if (res !== null) {
         console.log("Saved emails found, Fetching new emails");
-        setEmails(res);
-        getTimeStamp(sectionName).then((time) => {
+        setJobs(res);
+        getStoredTimeStamp(sectionName).then((time) => {
           if (time !== null) {
             console.log("Previous saved login time: " + time); //1614819682
             getAllJobs(
@@ -122,14 +102,12 @@ const SectionScreen = ({ navigation, route }) => {
           sectionName
         ).then((_data_) => {
           console.log("Result size estimate: " + _data_[1].resultSizeEstimate);
-          setEmails(_data_[0]);
-          storeSectionJobs(`@${sectionName}-emails`, _data_[0]);
           //setModalVisible((p) => !p);
           storeTimeStamp(sectionName);
-          // addToJobList({
-          //   sectionName: sectionName,
-          //   data: _data_[0],
-          // });
+          addSectionJobs({
+            sectionName: sectionName,
+            data: _data_[0],
+          });
           console.log("Successfully saved emails");
         });
       }
@@ -143,7 +121,7 @@ const SectionScreen = ({ navigation, route }) => {
         <FlatList
           style={{ flex: 1, backgroundColor: theme.backgroundColor }}
           showsVerticalScrollIndicator={true}
-          data={emails.filter(
+          data={jobs.filter(
             (item) =>
               item.from.toUpperCase().includes(searchTerm.toUpperCase()) ||
               item.address.toUpperCase().includes(searchTerm.toUpperCase())
@@ -151,7 +129,7 @@ const SectionScreen = ({ navigation, route }) => {
           onScroll={() => {}}
           ListHeaderComponent={
             <SearchArea
-              emails={emails.filter(
+              emails={jobs.filter(
                 (item) =>
                   item.from.toUpperCase().includes(searchTerm.toUpperCase()) ||
                   item.address.toUpperCase().includes(searchTerm.toUpperCase())
@@ -159,7 +137,6 @@ const SectionScreen = ({ navigation, route }) => {
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
               theme={theme}
-              callBack={setEmails}
             />
           }
           maxToRenderPerBatch={10}
@@ -173,7 +150,6 @@ const SectionScreen = ({ navigation, route }) => {
             return (
               <Card
                 jobItem={{ ...item, sectionName }}
-                callBack={setEmails}
                 from={item.from}
                 via={item.via}
                 date={item.date}
