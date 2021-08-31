@@ -61,7 +61,6 @@ export const ThemeProvider = ({ children }) => {
   const [osTheme, setOsTheme] = useState(
     sys_theme === "light" ? lightTheme : darkTheme
   );
-  const [change, setChange] = useState();
 
   useEffect(() => {
     Appearance.addChangeListener(async ({ colorScheme }) => {
@@ -69,6 +68,9 @@ export const ThemeProvider = ({ children }) => {
       if (_sys_theme === "true") {
         setTheme(colorScheme === "dark" ? darkTheme : lightTheme);
       }
+      colorScheme === "light"
+        ? StatusBar.setBarStyle("dark-content")
+        : StatusBar.setBarStyle("light-content");
     });
 
     AsyncStorage.multiGet([Keys.darkMode, Keys.autoDarkMode]).then((res) => {
@@ -83,9 +85,9 @@ export const ThemeProvider = ({ children }) => {
       } else {
         sys_theme === "dark" ? setTheme(darkTheme) : setTheme(lightTheme);
       }
-      darkmode === "true"
-        ? StatusBar.setBarStyle("dark-content")
-        : StatusBar.setBarStyle("light-content");
+      // darkmode === "true"
+      //   ? StatusBar.setBarStyle("dark-content")
+      //   : StatusBar.setBarStyle("light-content");
     });
   }, []);
   return (

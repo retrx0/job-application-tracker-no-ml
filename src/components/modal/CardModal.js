@@ -6,7 +6,6 @@ import Styles from "../../styles/Styles";
 import CardModalInput from "./CardModalInput";
 import ModalButton from "./ModalButton";
 import { Picker } from "@react-native-picker/picker";
-import { modifyJob } from "../../service/JobService";
 import { getDateInString } from "../../util/TimeUtil";
 import JobCardContext from "../../context/JobCardContext";
 
@@ -26,146 +25,168 @@ const CardModal = ({
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [modalCompanyName, setModalCompanyName] = useState(_autoFillData.from);
   const [modalVia, setModalVia] = useState(_autoFillData.via);
-  const [modalDate, setModalDate] = useState(Math.floor(Date.now()));
-
-  const [modalSelectedSection, setModalSelectedSection] = useState("Applied");
-
+  const [modalDate, setModalDate] = useState(
+    actionType === "add" ? Math.floor(Date.now()) : jobItem.date
+  );
+  const [modalSelectedSection, setModalSelectedSection] = useState(section);
   const { editJob, addJob } = useContext(JobCardContext);
+
+  const validateForm = () => {};
 
   useEffect(() => {
     setModalSelectedSection(section);
   }, []);
 
   return (
-    <Modal
-      animationType={"slide"}
-      visible={modalVisible}
-      presentationStyle="pageSheet"
-    >
+    <Modal animationType={"none"} visible={modalVisible} transparent={true}>
       <View
         style={{
-          backgroundColor: theme.backgroundColor,
-          flexDirection: "column",
+          backgroundColor: "rgba(0,0,0,0.4)",
           flex: 1,
           justifyContent: "center",
         }}
       >
-        <Text style={[styles.title, { fontSize: 30, color: theme.textColor }]}>
-          {headerText}
-        </Text>
-        <CardModalInput
-          autoFillText={_autoFillData.from}
-          onChange={(t) => setModalCompanyName(t)}
-          inputLabel={"Company"}
-          theme={theme}
-        />
-        <CardModalInput
-          autoFillText={_autoFillData.via}
-          onChange={(t) => setModalVia(t)}
-          inputLabel={"Via"}
-          theme={theme}
-        />
-        <TouchableOpacity onPress={() => setDatePickerVisibility(true)}>
+        <View
+          style={[
+            Styles.AppBorderRadiusDefault,
+            {
+              backgroundColor: theme.backgroundColor,
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: 15,
+              margin: 15,
+            },
+          ]}
+        >
           <Text
+            style={[styles.title, { fontSize: 30, color: theme.textColor }]}
+          >
+            {headerText}
+          </Text>
+          <CardModalInput
+            autoFillText={_autoFillData.from}
+            onChange={(t) => setModalCompanyName(t)}
+            inputLabel={"Company *"}
+            theme={theme}
+          />
+          <CardModalInput
+            autoFillText={_autoFillData.via}
+            onChange={(t) => setModalVia(t)}
+            inputLabel={"Via *"}
+            theme={theme}
+          />
+          <TouchableOpacity onPress={() => setDatePickerVisibility(true)}>
+            <Text
+              style={[
+                {
+                  color: theme.textColor,
+                  padding: 10,
+                  textAlign: "center",
+                  fontSize: 22,
+                  fontWeight: "400",
+                  color: theme.textColorCard,
+                },
+              ]}
+            >
+              {getDateInString(modalDate)}
+            </Text>
+          </TouchableOpacity>
+          <Picker
+            prompt={"Select Category *"}
             style={[
               {
-                color: theme.textColor,
-                padding: 10,
-                textAlign: "center",
-                fontSize: 22,
-                fontWeight: "400",
-                color: theme.textColorCard,
+                backgroundColor: theme.backgroundColorAlt,
+                margin: 10,
               },
+              Styles.AppBorderRadiusSmall,
             ]}
+            itemStyle={{ color: theme.textColor }}
+            selectedValue={modalSelectedSection}
+            onValueChange={(itemValue, itemIndex) =>
+              setModalSelectedSection(itemValue)
+            }
           >
-            {getDateInString(modalDate)}
-          </Text>
-        </TouchableOpacity>
-        <Picker
-          prompt={"Select Category"}
-          value={modalSelectedSection}
-          style={[
-            {
-              backgroundColor: theme.backgroundColorAlt,
-              margin: 10,
-            },
-            Styles.AppBorderRadiusSmall,
-          ]}
-          itemStyle={{ color: theme.textColor }}
-          selectedValue={modalSelectedSection}
-          onValueChange={(itemValue, itemIndex) =>
-            setModalSelectedSection(itemValue)
-          }
-        >
-          <Picker.Item label={"Applied"} value={"Applied"} />
-          <Picker.Item label={"Reject"} value={"Rejected"} />
-          <Picker.Item label={"Interview or Progress"} value={"Interview"} />
-          {/* <Picker.Item label={"Progress"} value={"Progress"} /> */}
-        </Picker>
-        <DateTimePickerModal
-          isDarkModeEnabled={theme.dark}
-          textColor={theme.textColor}
-          maximumDate={new Date()}
-          minimumDate={
-            new Date(new Date().setFullYear(new Date().getFullYear() - 10))
-          }
-          isVisible={isDatePickerVisible}
-          mode="date"
-          onConfirm={(date) => {
-            setModalDate(Math.floor(date));
-            setDatePickerVisibility(false);
-          }}
-          onCancel={() => {
-            console.log("Date Picking Canceled");
-            setDatePickerVisibility(false);
-          }}
-        />
-        <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-          <ModalButton
-            title={"Cancel"}
-            theme={theme}
-            onPress={() => {
-              onClose();
+            <Picker.Item label={"Applied"} value={"Applied"} />
+            <Picker.Item label={"Reject"} value={"Rejected"} />
+            <Picker.Item label={"Interview or Progress"} value={"Interview"} />
+          </Picker>
+          <DateTimePickerModal
+            isDarkModeEnabled={theme.dark}
+            textColor={theme.textColor}
+            maximumDate={new Date()}
+            minimumDate={
+              new Date(new Date().setFullYear(new Date().getFullYear() - 10))
+            }
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={(date) => {
+              setModalDate(Math.floor(date));
+              setDatePickerVisibility(false);
+            }}
+            onCancel={() => {
+              console.log("Date Picking Canceled");
+              setDatePickerVisibility(false);
             }}
           />
-          <ModalButton
-            title={"Save"}
-            theme={theme}
-            onPress={() => {
-              console.log({
-                modalCompanyName,
-                modalVia,
-                modalDate,
-                modalSelectedSection,
-              });
-              switch (actionType) {
-                case "edit":
-                  editJob(jobItem, {
-                    from: modalCompanyName,
-                    date: modalDate,
-                    via: modalVia,
-                    sectionName: modalSelectedSection,
-                  });
-                  break;
-                case "add":
-                  addJob({
-                    id:
-                      "id" +
-                      Date.now().toString(36) +
-                      Math.random().toString(36).substr(2),
-                    from: modalCompanyName,
-                    date: modalDate,
-                    via: modalVia,
-                    sectionName: modalSelectedSection,
-                  });
-                  break;
-                default:
-                  break;
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-evenly" }}
+          >
+            <ModalButton
+              title={"Cancel"}
+              theme={theme}
+              onPress={() => {
+                onClose();
+              }}
+            />
+            <ModalButton
+              title={"Save"}
+              theme={theme}
+              disabled={
+                modalSelectedSection == undefined ||
+                modalCompanyName == undefined ||
+                modalCompanyName == "" ||
+                String(modalCompanyName).trim().length == 0 ||
+                modalVia == undefined ||
+                modalVia == "" ||
+                String(modalVia).trim().length == 0 ||
+                modalDate == undefined
               }
+              onPress={() => {
+                console.log({
+                  modalCompanyName,
+                  modalVia,
+                  modalDate,
+                  modalSelectedSection,
+                });
+                switch (actionType) {
+                  case "edit":
+                    editJob(jobItem, {
+                      from: modalCompanyName,
+                      date: modalDate,
+                      via: modalVia,
+                      sectionName: modalSelectedSection,
+                    });
+                    break;
+                  case "add":
+                    addJob({
+                      id:
+                        "id" +
+                        Date.now().toString(36) +
+                        Math.random().toString(36).substr(2),
+                      from: modalCompanyName,
+                      date: modalDate,
+                      via: modalVia,
+                      sectionName: modalSelectedSection,
+                    });
+                    break;
+                  default:
+                    break;
+                }
 
-              onClose();
-            }}
-          />
+                onClose();
+              }}
+            />
+          </View>
         </View>
       </View>
     </Modal>
@@ -173,11 +194,6 @@ const CardModal = ({
 };
 
 const styles = StyleSheet.create({
-  input: {
-    width: 300,
-    height: 40,
-    margin: 10,
-  },
   title: {
     fontSize: 22,
     padding: 10,

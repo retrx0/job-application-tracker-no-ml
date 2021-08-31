@@ -1,16 +1,17 @@
 import { URLS } from "../constants/URL_CONSTANTS";
 import { credentials } from "../auth/Credentials";
 import { Platform } from "react-native";
+import { getCompanyNameFromEmailSubject } from "../util/StringUtil";
 
 export const isAndroid = () => Platform.OS === "android";
 
-export const fetchAllEmails = async (user, constraint, mustContain, has) => {
+export const fetchAllEmails = async (dto) => {
   // Fetch All Emails
   const data = await fetch(
-    `${URLS.FETCH_EMAILS_URL}/${user.user.email}/messages?q=(${mustContain} ${has} ${constraint})`,
+    `${URLS.FETCH_EMAILS_URL}/${dto.user.user.email}/messages?q=(${dto.mustContain} ${dto.has} ${dto.constraint})`,
     {
       headers: {
-        Authorization: `Bearer ${user.accessToken}`,
+        Authorization: `Bearer ${dto.user.accessToken}`,
       },
     }
   )
@@ -22,19 +23,14 @@ export const fetchAllEmails = async (user, constraint, mustContain, has) => {
   return data;
 };
 
-export const getAllJobs = async (
-  user,
-  constraint,
-  mustContain,
-  has,
-  sectionName
-) => {
-  const data = await fetchAllEmails(user, constraint, mustContain, has);
+export const getAllJobs = async (dto) => {
+  console.log("Getting all jobs...");
+  const data = await fetchAllEmails(dto);
   let tmp = [];
   if (data.resultSizeEstimate > 0) {
     for (const i in data.messages) {
       const item = data.messages[i];
-      const e = await getEmail({ user, item }, sectionName);
+      const e = await getEmail({ user: dto.user, item }, dto.sectionName);
       tmp.push(e);
     }
     return [tmp, data];
@@ -76,12 +72,13 @@ export const getEmail = async ({ user, item }, sectionName) => {
     return email;
   });
 
-  if (email.from === "LinkedIn")
-    email.from = String(email.subject).split(RegExp(" at "))[1].trim();
+  email.from = getCompanyNameFromEmailSubject(email);
+
   return { ...email, date: val.internalDate, id: val.id };
 };
 
 export const getRefreshToken = async (user) => {
+  console.log("Requesting new token");
   try {
     const refresh_token = await fetch(
       `${URLS.REFRESH_TOKEN_URL}?client_id=${

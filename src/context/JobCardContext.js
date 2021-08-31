@@ -3,6 +3,7 @@ import {
   testDataWithSection,
   testEmptyDataWithSection,
 } from "../../test/data/StaticTestData";
+import { storeSectionJobs } from "../dao/JobDAO";
 import jobCardReducer from "../reducers/jobCardReducer";
 
 const JobCardContext = createContext();
@@ -18,6 +19,7 @@ export const JobCardProvider = ({ children }) => {
       type: "add",
       payload: object,
     });
+    storeSectionJobs(Keys.jobs, [...jobCardList]);
   };
 
   const editJob = (item, newItem) => {
@@ -25,6 +27,7 @@ export const JobCardProvider = ({ children }) => {
       type: "edit",
       payload: { item: item, newItem: newItem },
     });
+    storeSectionJobs(Keys.jobs, [...jobCardList]);
   };
 
   const deleteJob = (item) => {
@@ -32,6 +35,7 @@ export const JobCardProvider = ({ children }) => {
       type: "delete",
       payload: item,
     });
+    storeSectionJobs(Keys.jobs, [...jobCardList]);
   };
 
   const recategorizeJob = (item, newCat) => {
@@ -39,6 +43,7 @@ export const JobCardProvider = ({ children }) => {
       type: "recategorize",
       payload: { ...item, newCategory: newCat },
     });
+    storeSectionJobs(Keys.jobs, [...jobCardList]);
   };
 
   const setJobs = (data) => {
@@ -47,6 +52,7 @@ export const JobCardProvider = ({ children }) => {
 
   const addSectionJobs = (object) => {
     dispatch({ type: "addSection", payload: object });
+    storeSectionJobs(Keys.jobs, [...jobCardList]);
   };
 
   useEffect(() => {

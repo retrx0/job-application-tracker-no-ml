@@ -1,6 +1,6 @@
 import { Picker } from "@react-native-picker/picker";
 import React, { useContext, useState } from "react";
-import { View, Modal } from "react-native";
+import { View, Modal, Text } from "react-native";
 import ModalButton from "./ModalButton";
 import { BlurView } from "expo-blur";
 import Styles from "../../styles/Styles";
@@ -24,7 +24,7 @@ const RecategorizeModal = ({
         flex: 1,
         backgroundColor: theme.backgroundColor,
       }}
-      animationType="fade"
+      animationType="none"
     >
       <View
         style={{
@@ -44,6 +44,17 @@ const RecategorizeModal = ({
             },
           ]}
         >
+          <Text
+            style={{
+              color: theme.textColor,
+              textAlign: "center",
+              fontWeight: "500",
+              fontSize: 20,
+              padding: 10,
+            }}
+          >
+            Recategorize Job
+          </Text>
           <Picker
             prompt={"Select New Category"}
             style={[

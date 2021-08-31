@@ -31,6 +31,13 @@ const SectionScreen = ({ navigation, route }) => {
   const { jobCardList, addSectionJobs, setJobs } = useContext(JobCardContext);
   const jobs = jobCardList.filter((i) => i.sectionName == sectionName)[0].data;
 
+  const tmp_userDTO = {
+    user: user,
+    mustContain: mustContain,
+    has: has,
+    sectionName: sectionName,
+  };
+
   const resolveModalAndSetDataWithBadge = (data, tmp_eml) => {
     console.log("Resolving and setting badge");
     if (data[0].length > 0) {
@@ -44,7 +51,7 @@ const SectionScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    //AsyncStorage.clear();
+    // AsyncStorage.clear();
     console.log("Selected start date from section screen: " + startDate);
 
     //Check if emails are stored
@@ -56,63 +63,60 @@ const SectionScreen = ({ navigation, route }) => {
         getStoredTimeStamp(sectionName).then((time) => {
           if (time !== null) {
             console.log("Previous saved login time: " + time); //1614819682
-            getAllJobs(
-              user,
-              `after:${time}`,
-              mustContain,
-              has,
-              sectionName
-            ).then((_data) => {
-              console.log("New data: " + _data[0].length);
-              if (_data[1].error !== undefined) {
-                console.log("Could not get new emails. Requesting new token");
-                getRefreshToken(user)
-                  .then((__data) => {
-                    if (__data.error === undefined) {
-                      user.accessToken = __data.access_token;
-                      setUser(user);
-                      AsyncStorage.setItem(Keys.token, JSON.stringify(user));
-                      getAllJobs(
-                        user,
-                        `after:${time}`,
-                        mustContain,
-                        has,
-                        sectionName
-                      ).then((__eml) => {
-                        resolveModalAndSetDataWithBadge(__eml, res);
-                      });
-                    }
-                  })
-                  .catch((e) => console.log("Error requesting new token " + e));
-              } else {
-                resolveModalAndSetDataWithBadge(_data, res);
+            getAllJobs({ ...tmp_userDTO, constraint: `after:${time}` }).then(
+              (_data) => {
+                console.log("New data: " + _data[0].length);
+                if (_data[1].error !== undefined) {
+                  console.log("Could not get new emails");
+                  getRefreshToken(user)
+                    .then((__data) => {
+                      if (__data.error === undefined) {
+                        user.accessToken = __data.access_token;
+                        setUser(user);
+                        AsyncStorage.setItem(Keys.token, JSON.stringify(user));
+                        getAllJobs({
+                          ...tmp_userDTO,
+                          constraint: `after:${time}`,
+                        }).then((__eml) => {
+                          resolveModalAndSetDataWithBadge(__eml, res);
+                        });
+                      }
+                    })
+                    .catch((e) =>
+                      console.log("Error requesting new token " + e)
+                    );
+                } else {
+                  resolveModalAndSetDataWithBadge(_data, res);
+                }
               }
-            });
+            );
           }
         });
         storeTimeStamp(sectionName);
       } else {
         console.log("No Saved Emails Found, Fetching new set of emails");
         // Store Emails
-        getAllJobs(
-          user,
-          `after:${startDate}`,
-          mustContain,
-          has,
-          sectionName
-        ).then((_data_) => {
-          console.log("Result size estimate: " + _data_[1].resultSizeEstimate);
-          //setModalVisible((p) => !p);
-          storeTimeStamp(sectionName);
-          addSectionJobs({
-            sectionName: sectionName,
-            data: _data_[0],
-          });
-          console.log("Successfully saved emails");
-        });
+        getAllJobs({ ...tmp_userDTO, constraint: `after:${startDate}` }).then(
+          (_data_) => {
+            console.log(
+              "Result size estimate: " + _data_[1].resultSizeEstimate
+            );
+            //setModalVisible((p) => !p);
+            storeTimeStamp(sectionName);
+            addSectionJobs({
+              sectionName: sectionName,
+              data: _data_[0],
+            });
+            console.log("Successfully saved emails");
+          }
+        );
       }
     });
   }, []);
+
+  const renderCard = ({ item }) => {
+    return <Card jobItem={{ ...item, sectionName }} />;
+  };
 
   return (
     <View style={{ backgroundColor: theme.backgroundColor, flex: 1 }}>
@@ -139,25 +143,14 @@ const SectionScreen = ({ navigation, route }) => {
               theme={theme}
             />
           }
-          maxToRenderPerBatch={10}
-          initialNumToRender={10}
+          maxToRenderPerBatch={20}
+          initialNumToRender={15}
           updateCellsBatchingPeriod={20}
           removeClippedSubviews={false}
           windowSize={10}
           onEndReachedThreshold={0.1}
           keyExtractor={(item, id) => (id * Math.random() * 10).toString()}
-          renderItem={({ item }) => {
-            return (
-              <Card
-                jobItem={{ ...item, sectionName }}
-                from={item.from}
-                via={item.via}
-                date={item.date}
-                address={item.address}
-                section={sectionName}
-              />
-            );
-          }}
+          renderItem={renderCard}
         />
       </SafeAreaView>
     </View>

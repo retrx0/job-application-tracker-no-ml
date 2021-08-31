@@ -1,6 +1,3 @@
-import Keys from "../auth/Keys";
-import { storeSectionJobs } from "../dao/JobDAO";
-
 export default JobCardReducer = (state, action) => {
   switch (action.type) {
     case "set":
@@ -10,14 +7,13 @@ export default JobCardReducer = (state, action) => {
         (i) => i.sectionName == action.payload.sectionName
       )[0];
       s.data = action.payload.data;
-      storeSectionJobs(Keys.jobs, [...state]);
+
       return [...state];
     case "add":
       let l = state.filter(
         (i) => i.sectionName == action.payload.sectionName
       )[0];
-      l.data = [...l.data, action.payload];
-      storeSectionJobs(Keys.jobs, [...state]);
+      l.data = [action.payload, ...l.data];
       return [...state];
     case "edit":
       let o = state.filter(
@@ -36,14 +32,12 @@ export default JobCardReducer = (state, action) => {
         o.data[jobIndex].date = action.payload.newItem.date;
         o.data[jobIndex].sectionName = action.payload.newItem.sectionName;
       }
-      storeSectionJobs(Keys.jobs, [...state]);
       return [...state];
     case "delete":
       let d = state.filter(
         (i) => i.sectionName == action.payload.sectionName
       )[0];
       d.data = d.data.filter((item) => item.id !== action.payload.id);
-      storeSectionJobs(Keys.jobs, [...state]);
       return [...state];
     case "recategorize":
       let r = state.filter(
@@ -55,9 +49,8 @@ export default JobCardReducer = (state, action) => {
           (i) => i.sectionName == action.payload.newCategory
         )[0];
         // remove from current cat
-        newObj.data = [...newObj.data, action.payload];
+        newObj.data = [action.payload, ...newObj.data];
         r.data = r.data.filter((item) => item.id !== action.payload.id);
-        storeSectionJobs(Keys.jobs, [...state]);
       }
       return [...state];
     default:

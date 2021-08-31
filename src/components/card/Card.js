@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ThemeContext from "../../context/ThemeContext";
-import { useCurrentTheme } from "../../screens/SettingsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Styles from "../../styles/Styles";
 import ViaBadge from "../badge/ViaBadge";
@@ -22,28 +21,20 @@ import CardModal from "../modal/CardModal";
 import { getDateInString } from "../../util/TimeUtil";
 import RecategorizeModal from "../modal/RecategorizeModal";
 import JobCardContext from "../../context/JobCardContext";
+import {
+  capitalizeFirstLetter,
+  trimAndRemoveUnnecessaryCharFromEmailSender,
+} from "../../util/StringUtil";
 
-const Card = ({ jobItem, from, date, address, via, section }) => {
+const Card = ({ jobItem }) => {
   const { theme } = useContext(ThemeContext);
-  const _date = getDateInString(date);
-
+  const _date = getDateInString(jobItem.date);
   const { deleteJob } = useContext(JobCardContext);
-
-  if (String(from).startsWith('"')) {
-    let rgx = new RegExp(`"`, "g");
-    from = String(from).replace(rgx, "");
-  }
-
-  if (
-    String(from).startsWith("no-reply") ||
-    String(from).startsWith("noreply") ||
-    String(from).startsWith("jobs")
-  )
-    from = String(from).split("@")[1].trim();
-
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [recategorizeModalVisible, setRecategorizeModalVisible] =
     useState(false);
+
+  trimAndRemoveUnnecessaryCharFromEmailSender(jobItem);
 
   const PopUpMenu = ({ theme }) => {
     const customMenuStyle = {
@@ -133,14 +124,14 @@ const Card = ({ jobItem, from, date, address, via, section }) => {
         theme={theme}
         modalVisible={editModalVisible}
         onClose={() => setEditModalVisible(false)}
-        autoFillData={{ from, via, date }}
-        section={section}
+        autoFillData={jobItem}
+        section={jobItem.section}
       />
       <RecategorizeModal
         theme={theme}
         shown={recategorizeModalVisible}
         setShown={setRecategorizeModalVisible}
-        sectionName={section}
+        sectionName={jobItem.section}
         jobItem={jobItem}
       />
       <View
@@ -151,13 +142,13 @@ const Card = ({ jobItem, from, date, address, via, section }) => {
         }}
       >
         <Text style={[styles.title, { color: theme.textColorCard }]}>
-          {String(from).charAt(0).toUpperCase() + String(from).slice(1)}
+          {capitalizeFirstLetter(jobItem.from)}
         </Text>
         <View style={{ position: "absolute", top: 3, right: 3 }}>
           <PopUpMenu theme={theme} />
         </View>
       </View>
-      <ViaBadge theme={theme} via={via} />
+      <ViaBadge theme={theme} via={jobItem.via} />
       <Text style={[styles.date, { color: theme.textColorLight }]}>
         {_date}
       </Text>
