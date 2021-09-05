@@ -37,7 +37,7 @@ const AuthSplashScreen = ({ navigation }) => {
             fontWeight: "400",
           }}
         >
-          JobYoke
+          Jobbook
         </Text>
       </View>
     </SafeAreaView>

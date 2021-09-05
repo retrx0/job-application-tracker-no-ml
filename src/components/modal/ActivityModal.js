@@ -18,11 +18,6 @@ const ActivityModal = ({ theme, modalVisible }) => {
           size={"large"}
           color={theme.textColor}
         />
-        {
-          <Text style={{ color: theme.textColor, fontSize: 16, margin: 10 }}>
-            Please wait a bit...
-          </Text>
-        }
       </View>
     </Modal>
   );

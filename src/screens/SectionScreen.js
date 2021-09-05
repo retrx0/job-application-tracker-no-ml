@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { View, SafeAreaView, FlatList, VirtualizedList } from "react-native";
 import Card from "../components/card/Card";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -18,6 +18,7 @@ import JobCardContext from "../context/JobCardContext";
 import ActivityModal from "../components/modal/ActivityModal";
 import { getAllJobs, getRefreshToken } from "../api/GoogleGmailAPI";
 import useJobEmails from "../hooks/useJobList";
+import CardModal from "../components/modal/CardModal";
 
 const SectionScreen = ({ navigation, route }) => {
   const { user, setUser, startDate } = useContext(UserContext);
@@ -30,6 +31,12 @@ const SectionScreen = ({ navigation, route }) => {
   const { setBadge, getBadge } = useContext(NotifyContext);
   const { jobCardList, addSectionJobs, setJobs } = useContext(JobCardContext);
   const jobs = jobCardList.filter((i) => i.sectionName == sectionName)[0].data;
+
+  const [autoFill, setAutoFill] = useState({
+    date: "",
+    sectionName: sectionName,
+  });
+  const modalRef = useRef(null);
 
   const tmp_userDTO = {
     user: user,
@@ -44,10 +51,10 @@ const SectionScreen = ({ navigation, route }) => {
       console.log("New jobs found");
       setBadge(sectionName, true, data[0].length);
       setJobs((e) => data[0].concat(e));
-      //setModalVisible((p) => !p);
       storeSectionJobs(Keys.jobs, data[0].concat(tmp_eml));
       console.log("Saved new email data, badge set to : " + data[0].length);
     }
+    setModalVisible(false);
   };
 
   useEffect(() => {
@@ -101,7 +108,7 @@ const SectionScreen = ({ navigation, route }) => {
             console.log(
               "Result size estimate: " + _data_[1].resultSizeEstimate
             );
-            //setModalVisible((p) => !p);
+            setModalVisible(false);
             storeTimeStamp(sectionName);
             addSectionJobs({
               sectionName: sectionName,
@@ -115,13 +122,29 @@ const SectionScreen = ({ navigation, route }) => {
   }, []);
 
   const renderCard = ({ item }) => {
-    return <Card jobItem={{ ...item, sectionName }} />;
+    return (
+      <Card
+        jobItem={{ ...item, sectionName: sectionName }}
+        setAutoFill={setAutoFill}
+        modalRef={modalRef}
+      />
+    );
   };
 
   return (
     <View style={{ backgroundColor: theme.backgroundColor, flex: 1 }}>
       <SafeAreaView style={[{ flex: 1 }]}>
-        {/* <ActivityModal theme={theme} modalVisible={false} /> */}
+        <ActivityModal theme={theme} modalVisible={modalVisible} />
+        <CardModal
+          modalRef={modalRef}
+          jobItem={autoFill}
+          actionType={"edit"}
+          headerText={"Edit job"}
+          theme={theme}
+          onClose={() => modalRef.current?.close()}
+          autoFillData={autoFill}
+          section={sectionName}
+        />
         <FlatList
           style={{ flex: 1, backgroundColor: theme.backgroundColor }}
           showsVerticalScrollIndicator={true}
@@ -141,13 +164,15 @@ const SectionScreen = ({ navigation, route }) => {
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
               theme={theme}
+              section={sectionName}
             />
           }
           maxToRenderPerBatch={20}
           initialNumToRender={15}
-          updateCellsBatchingPeriod={20}
+          // updateCellsBatchingPeriod={20}
           removeClippedSubviews={false}
-          windowSize={10}
+          // windowSize={10}
+          pagingEnabled={true}
           onEndReachedThreshold={0.1}
           keyExtractor={(item, id) => (id * Math.random() * 10).toString()}
           renderItem={renderCard}

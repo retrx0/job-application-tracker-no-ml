@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Alert } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ThemeContext from "../../context/ThemeContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -26,15 +26,30 @@ import {
   trimAndRemoveUnnecessaryCharFromEmailSender,
 } from "../../util/StringUtil";
 
-const Card = ({ jobItem }) => {
+const Card = ({ modalRef, jobItem, setAutoFill, setEditModalVisible }) => {
   const { theme } = useContext(ThemeContext);
   const _date = getDateInString(jobItem.date);
   const { deleteJob } = useContext(JobCardContext);
-  const [editModalVisible, setEditModalVisible] = useState(false);
+  // const [editModalVisible, setEditModalVisible] = useState(false);
   const [recategorizeModalVisible, setRecategorizeModalVisible] =
     useState(false);
 
   trimAndRemoveUnnecessaryCharFromEmailSender(jobItem);
+
+  const showDeleteAlert = (jobItem) => {
+    Alert.alert("Warning", "Are you sure you want to delete this item", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Canceled deletion"),
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        onPress: () => deleteJob(jobItem),
+        style: "destructive",
+      },
+    ]);
+  };
 
   const PopUpMenu = ({ theme }) => {
     const customMenuStyle = {
@@ -84,7 +99,6 @@ const Card = ({ jobItem }) => {
             textColor={theme.textColorCard}
             onClick={() => {
               setRecategorizeModalVisible((v) => !v);
-              //recategorizeJob(jobItem, "Interview", callBack);
             }}
           />
           <CustomMenuOption
@@ -92,7 +106,9 @@ const Card = ({ jobItem }) => {
             IconComponent={PencilSquare}
             textColor={theme.textColorCard}
             onClick={() => {
-              setEditModalVisible(true);
+              setAutoFill(jobItem);
+              modalRef.current?.open();
+              // setEditModalVisible(true);
             }}
           />
           <CustomMenuOption
@@ -100,7 +116,7 @@ const Card = ({ jobItem }) => {
             IconComponent={Trash}
             textColor={theme.textColorDanger}
             onClick={() => {
-              deleteJob(jobItem);
+              showDeleteAlert(jobItem);
             }}
           />
         </MenuOptions>
@@ -117,21 +133,22 @@ const Card = ({ jobItem }) => {
         { backgroundColor: theme.backgroundColorCard },
       ]}
     >
-      <CardModal
+      {/* <CardModal
+        modalRef={modalRef}
         jobItem={jobItem}
         actionType={"edit"}
         headerText={"Edit a job"}
         theme={theme}
-        modalVisible={editModalVisible}
-        onClose={() => setEditModalVisible(false)}
+        // modalVisible={editModalVisible}
+        onClose={() => modalRef.current?.close()}
         autoFillData={jobItem}
-        section={jobItem.section}
-      />
+        section={jobItem.sectionName}
+      /> */}
       <RecategorizeModal
         theme={theme}
         shown={recategorizeModalVisible}
         setShown={setRecategorizeModalVisible}
-        sectionName={jobItem.section}
+        sectionName={jobItem.sectionName}
         jobItem={jobItem}
       />
       <View
