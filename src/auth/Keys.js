@@ -3,4 +3,5 @@ export default Keys = {
   welcomeModal: `@welcome-modal`,
   darkMode: `@dark-mode`,
   autoDarkMode: `@auto-dark-mode`,
+  jobs: `@all-jobs`,
 };

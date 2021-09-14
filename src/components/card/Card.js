@@ -1,8 +1,7 @@
 import React, { useContext, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Alert } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ThemeContext from "../../context/ThemeContext";
-import { useCurrentTheme } from "../../screens/SettingsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Styles from "../../styles/Styles";
 import ViaBadge from "../badge/ViaBadge";
@@ -19,29 +18,38 @@ import Trash from "react-native-bootstrap-icons/icons/trash";
 import PencilSquare from "react-native-bootstrap-icons/icons/pencil-square";
 import CustomMenuOption from "./../card/menu/CustomMenuOption";
 import CardModal from "../modal/CardModal";
-import { deleteJob, recategorizeJob } from "../../controller/JobController";
 import { getDateInString } from "../../util/TimeUtil";
 import RecategorizeModal from "../modal/RecategorizeModal";
+import JobCardContext from "../../context/JobCardContext";
+import {
+  capitalizeFirstLetter,
+  trimAndRemoveUnnecessaryCharFromEmailSender,
+} from "../../util/StringUtil";
 
-const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
+const Card = ({ modalRef, jobItem, setAutoFill, setEditModalVisible }) => {
   const { theme } = useContext(ThemeContext);
-  const _date = getDateInString(date);
-
-  if (String(from).startsWith('"')) {
-    let rgx = new RegExp(`"`, "g");
-    from = String(from).replace(rgx, "");
-  }
-
-  if (
-    String(from).startsWith("no-reply") ||
-    String(from).startsWith("noreply") ||
-    String(from).startsWith("jobs")
-  )
-    from = String(from).split("@")[1].trim();
-
-  const [editModalVisible, setEditModalVisible] = useState(false);
+  const _date = getDateInString(jobItem.date);
+  const { deleteJob } = useContext(JobCardContext);
+  // const [editModalVisible, setEditModalVisible] = useState(false);
   const [recategorizeModalVisible, setRecategorizeModalVisible] =
     useState(false);
+
+  trimAndRemoveUnnecessaryCharFromEmailSender(jobItem);
+
+  const showDeleteAlert = (jobItem) => {
+    Alert.alert("Warning", "Are you sure you want to delete this item", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Canceled deletion"),
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        onPress: () => deleteJob(jobItem),
+        style: "destructive",
+      },
+    ]);
+  };
 
   const PopUpMenu = ({ theme }) => {
     const customMenuStyle = {
@@ -91,7 +99,6 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
             textColor={theme.textColorCard}
             onClick={() => {
               setRecategorizeModalVisible((v) => !v);
-              //recategorizeJob(jobItem, "Interview", callBack);
             }}
           />
           <CustomMenuOption
@@ -99,7 +106,9 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
             IconComponent={PencilSquare}
             textColor={theme.textColorCard}
             onClick={() => {
-              setEditModalVisible(true);
+              setAutoFill(jobItem);
+              modalRef.current?.open();
+              // setEditModalVisible(true);
             }}
           />
           <CustomMenuOption
@@ -107,7 +116,7 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
             IconComponent={Trash}
             textColor={theme.textColorDanger}
             onClick={() => {
-              deleteJob(jobItem, callBack);
+              showDeleteAlert(jobItem);
             }}
           />
         </MenuOptions>
@@ -124,23 +133,22 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
         { backgroundColor: theme.backgroundColorCard },
       ]}
     >
-      <CardModal
+      {/* <CardModal
+        modalRef={modalRef}
         jobItem={jobItem}
-        callBack={callBack}
         actionType={"edit"}
         headerText={"Edit a job"}
         theme={theme}
-        modalVisible={editModalVisible}
-        onClose={() => setEditModalVisible(false)}
-        autoFillData={{ from, via, date }}
-        section={section}
-      />
+        // modalVisible={editModalVisible}
+        onClose={() => modalRef.current?.close()}
+        autoFillData={jobItem}
+        section={jobItem.sectionName}
+      /> */}
       <RecategorizeModal
         theme={theme}
         shown={recategorizeModalVisible}
         setShown={setRecategorizeModalVisible}
-        sectionName={section}
-        callBack={callBack}
+        sectionName={jobItem.sectionName}
         jobItem={jobItem}
       />
       <View
@@ -151,13 +159,13 @@ const Card = ({ jobItem, from, date, address, via, section, callBack }) => {
         }}
       >
         <Text style={[styles.title, { color: theme.textColorCard }]}>
-          {String(from).charAt(0).toUpperCase() + String(from).slice(1)}
+          {capitalizeFirstLetter(jobItem.from)}
         </Text>
         <View style={{ position: "absolute", top: 3, right: 3 }}>
           <PopUpMenu theme={theme} />
         </View>
       </View>
-      <ViaBadge theme={theme} via={via} />
+      <ViaBadge theme={theme} via={jobItem.via} />
       <Text style={[styles.date, { color: theme.textColorLight }]}>
         {_date}
       </Text>

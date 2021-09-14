@@ -1,48 +1,38 @@
 import React from "react";
-import { View, Modal, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, Modal, ScrollView } from "react-native";
 import { PrivacyPolicyText } from "../../files/Privacy";
+import ModalButton from "./ModalButton";
 
-const PrivacyPolicyModal = ({ theme, privacyShown, setPrivacyShown }) => {
+const PrivacyPolicyModal = ({ theme, privacyShown, onClose, buttonTitle }) => {
   return (
     <Modal
       presentationStyle="pageSheet"
       visible={privacyShown}
-      style={{ flex: 1, backgroundColor: theme.backgroundColor }}
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        backgroundColor: theme.backgroundColor,
+      }}
       animationType="slide"
     >
-      <ScrollView
-        style={{
-          flex: 1,
-          backgroundColor: theme.backgroundColor,
-          padding: 10,
-        }}
-      >
-        <PrivacyPolicyText theme={theme} />
-      </ScrollView>
-
-      <TouchableOpacity
-        style={{
-          alignItems: "center",
-          position: "absolute",
-          bottom: 50,
-          left: 0,
-          right: 0,
-        }}
-        onPress={() => setPrivacyShown((p) => !p)}
-      >
+      <View style={{ backgroundColor: theme.backgroundColor, flex: 1 }}>
         <View
           style={{
-            padding: 5,
+            justifyContent: "center",
             backgroundColor: theme.backgroundColor,
-            borderRadius: 8,
-            borderColor: theme.borderColor,
           }}
         >
-          <Text style={{ color: theme.textColorCard, fontSize: 22 }}>
-            Close
-          </Text>
+          <ScrollView
+            style={{
+              backgroundColor: theme.backgroundColor,
+              padding: 10,
+            }}
+          >
+            <PrivacyPolicyText theme={theme} />
+          </ScrollView>
+          <ModalButton title={buttonTitle} onPress={onClose} theme={theme} />
         </View>
-      </TouchableOpacity>
+      </View>
     </Modal>
   );
 };

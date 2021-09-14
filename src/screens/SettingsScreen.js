@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Share,
   useColorScheme,
+  StatusBar,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ThemeContext from "../context/ThemeContext";
@@ -65,6 +66,9 @@ const SettingsScreen = ({ navigation }) => {
           onChange={(p) => {
             setDarkMode((k) => !k);
             p ? setTheme(darkTheme) : setTheme(lightTheme);
+            !p
+              ? StatusBar.setBarStyle("dark-content")
+              : StatusBar.setBarStyle("light-content");
           }}
           theme={theme}
           name="Dark mode"
@@ -89,7 +93,8 @@ const SettingsScreen = ({ navigation }) => {
         <PrivacyPolicyModal
           theme={theme}
           privacyShown={privacyShown}
-          setPrivacyShown={setPrivacyShown}
+          buttonTitle={"Close"}
+          onClose={() => setPrivacyShown((p) => !p)}
         />
       </SafeAreaView>
     </View>

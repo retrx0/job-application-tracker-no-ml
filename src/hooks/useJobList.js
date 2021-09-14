@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getSectionJobs } from "../dao/JobDAO";
+import { getStoredSectionJobs } from "../dao/JobDAO";
 
 export default () => {
   const _t = [];
@@ -10,9 +10,9 @@ export default () => {
   ]);
 
   const set = async () => {
-    const data1 = await getSectionJobs("@Applied-emails");
-    const data2 = await getSectionJobs("@Rejected-emails");
-    const data3 = await getSectionJobs("@Interview-emails");
+    const data1 = await getStoredSectionJobs("@Applied-emails");
+    const data2 = await getStoredSectionJobs("@Rejected-emails");
+    const data3 = await getStoredSectionJobs("@Interview-emails");
     return [
       { sectionName: "Applied", data: _t.concat(data1) },
       { sectionName: "Rejected", data: _t.concat(data2) },

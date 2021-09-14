@@ -4,6 +4,7 @@ import {
   getStoredUserInfo,
   storeUserInfo,
 } from "../dao/UserDAO";
+import { getDateInStringWithSlashes } from "../util/TimeUtil";
 
 const UserContext = createContext();
 
@@ -12,12 +13,9 @@ export const UserProvider = ({ children }) => {
   const currentDate = new Date(
     new Date().setFullYear(new Date().getFullYear() - 1)
   );
+
   const [startDate, setStartDate] = useState(
-    currentDate.getFullYear() +
-      "/" +
-      currentDate.getMonth() +
-      "/" +
-      currentDate.getDay()
+    getDateInStringWithSlashes(currentDate)
   );
 
   const setAndSaveUser = (user) => {

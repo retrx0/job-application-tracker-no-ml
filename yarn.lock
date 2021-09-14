@@ -6779,6 +6779,11 @@ react-native-modal-datetime-picker@^10.2.0:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-modalize@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-modalize/-/react-native-modalize-2.0.8.tgz#5dcb2c56d82e3dbd271582f832e7e02ae4cbb503"
+  integrity sha512-OKdpFVExEe4YM2uFHL/aStS9p0JaC6gBupjaW1QVHkGq22T2ASYwkhDvTnMS8BLOLWPx2fC3xEBzOcn2rh7EYw==
+
 react-native-paper@^3.12.0:
   version "3.12.0"
   resolved "https://registry.npmjs.org/react-native-paper/-/react-native-paper-3.12.0.tgz"
@@ -6792,6 +6797,11 @@ react-native-popup-menu@^0.15.11:
   version "0.15.11"
   resolved "https://registry.npmjs.org/react-native-popup-menu/-/react-native-popup-menu-0.15.11.tgz"
   integrity sha512-f5q2GoDN99bkA24wHiwasaErcdQEgyqYZ8IYuZPOrZNFr66E4rg6f4LElSVBA3EZJTSq5OddVeaOcU340bSTEg==
+
+react-native-portalize@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/react-native-portalize/-/react-native-portalize-1.0.7.tgz#8b3c742a06f863654d526ea1075a8596625f8482"
+  integrity sha512-icqopPh9ZSV+I8C5LlZN9pQJ0OMeBDNqHhP80+qDx0hOGEcsDC09wgjogbEMfJE0GcMDM7PDYtyQkqa9gIqd1g==
 
 react-native-ratings@^7.3.0:
   version "7.4.0"

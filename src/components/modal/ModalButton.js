@@ -2,9 +2,10 @@ import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import Styles from "../../styles/Styles";
 
-export default ModalButton = ({ onPress, title, theme }) => {
+export default ModalButton = ({ onPress, title, theme, disabled }) => {
   return (
     <TouchableOpacity
+      disabled={disabled ? disabled : false}
       style={{
         alignItems: "center",
         padding: 5,
@@ -14,7 +15,7 @@ export default ModalButton = ({ onPress, title, theme }) => {
     >
       <View
         style={[
-          Styles.dropShadow,
+          !disabled ? Styles.dropShadow : {},
           Styles.AppBorderRadiusDefault,
           {
             backgroundColor: theme.boxBackground,
@@ -25,8 +26,8 @@ export default ModalButton = ({ onPress, title, theme }) => {
         <Text
           style={{
             padding: 5,
-            color: theme.textColorCard,
-            fontSize: 25,
+            color: !disabled ? theme.textColorCard : theme.textColorLight,
+            fontSize: 22,
             textAlign: "center",
           }}
         >

@@ -1,22 +1,26 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Styles from "../styles/Styles";
 import { TouchableOpacity } from "react-native";
 import CardModal from "./modal/CardModal";
 
-export default SearchArea = (
-  { emails, searchTerm, setSearchTerm, theme },
-  callBack
-) => {
+export default SearchArea = ({
+  emails,
+  searchTerm,
+  setSearchTerm,
+  theme,
+  section,
+}) => {
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const modalRef = useRef(null);
 
   return (
     <View style={[styles.search, { backgroundColor: theme.backgroundColor }]}>
       <View>
         <TouchableOpacity
           onPress={() => {
-            setAddModalVisible(true);
+            modalRef.current?.open();
           }}
           style={[
             styles.button,
@@ -31,12 +35,13 @@ export default SearchArea = (
         </TouchableOpacity>
       </View>
       <CardModal
+        modalRef={modalRef}
         actionType={"add"}
-        headerText={"Add a new job"}
+        headerText={"Add new job"}
         theme={theme}
         modalVisible={addModalVisible}
-        onClose={() => setAddModalVisible(false)}
-        callBack={callBack}
+        onClose={() => modalRef.current?.close()}
+        section={section}
       />
       <View
         style={[
